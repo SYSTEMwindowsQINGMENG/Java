@@ -1,0 +1,1964 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>Java庄园农家乐 · 极寒之地玩家</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: linear-gradient(145deg, #07161e 0%, #12303e 50%, #1a3f50 100%);
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+    .lang-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .lang-overlay.hidden {
+      display: none;
+    }
+    .lang-modal {
+      background: #f5f0e0;
+      border-radius: 32px;
+      padding: 30px 24px;
+      max-width: 520px;
+      width: 92%;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
+    .lang-modal h2 {
+      font-size: 22px;
+      color: #1a3a28;
+      margin-bottom: 8px;
+    }
+    .lang-modal p {
+      font-size: 13px;
+      color: #5a7a7e;
+      margin-bottom: 18px;
+    }
+    .lang-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    .lang-option {
+      background: #d9e7ea;
+      border: none;
+      padding: 10px 6px;
+      border-radius: 16px;
+      font-weight: 700;
+      font-size: 12px;
+      color: #1a3a44;
+      cursor: pointer;
+      transition: all 0.15s;
+      box-shadow: 0 3px 0 #8aa3a8;
+    }
+    .lang-option:hover {
+      background: #2e5f6e;
+      color: #f2ede0;
+    }
+    .navbar {
+      max-width: 660px;
+      width: 100%;
+      background: rgba(252, 247, 238, 0.92);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 28px;
+      padding: 12px 24px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      border: 1px solid #c4d5d8;
+    }
+    .nav-btn {
+      background: #d9e7ea;
+      border: none;
+      padding: 10px 22px;
+      border-radius: 40px;
+      font-weight: 700;
+      font-size: 14px;
+      color: #1a3a44;
+      cursor: pointer;
+      transition: all 0.15s;
+      border: 1px solid #bcd0d4;
+      box-shadow: 0 3px 0 #8aa3a8;
+      letter-spacing: 0.5px;
+    }
+    .nav-btn:hover {
+      background: #c5dade;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 0 #7d989e;
+    }
+    .nav-btn.active {
+      background: #2e5f6e;
+      color: #f2ede0;
+      border-color: #7eafbf;
+      box-shadow: 0 3px 0 #1a3f4e;
+    }
+    .page {
+      max-width: 660px;
+      width: 100%;
+      display: none;
+    }
+    .page.show {
+      display: block;
+    }
+    .page-wide {
+      max-width: 100%;
+      width: 100%;
+      display: none;
+    }
+    .page-wide.show {
+      display: block;
+    }
+    .box {
+      width: 100%;
+      background: rgba(252, 247, 238, 0.97);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 52px;
+      box-shadow: 0 35px 55px -12px rgba(0, 0, 0, 0.8), 0 0 0 2px #7eafc5 inset, 0 0 0 5px rgba(200, 230, 245, 0.12) inset;
+      overflow: hidden;
+    }
+    .top {
+      padding: 34px 32px 20px;
+      border-bottom: 2px dashed #9cb8c4;
+      background: linear-gradient(180deg, rgba(255,251,240,0) 0%, rgba(230,220,200,0.15) 100%);
+    }
+    .frost-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+    .frost-icon-large {
+      font-size: 34px;
+      filter: drop-shadow(0 4px 4px rgba(0,20,30,0.2));
+    }
+    .badge-frost {
+      background: #b8d6e5;
+      padding: 7px 22px;
+      border-radius: 60px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #092b38;
+      letter-spacing: 0.6px;
+      border: 1.5px solid #eaf4fa;
+      box-shadow: inset 0 1px 4px white, 0 2px 4px rgba(0,0,0,0.05);
+    }
+    h1 {
+      font-size: 44px;
+      font-weight: 850;
+      line-height: 1.12;
+      color: #1a3a28;
+      text-shadow: 3px 3px 0 #ede1c2, 0 3px 10px rgba(60, 90, 70, 0.12);
+      margin-bottom: 12px;
+      word-break: break-word;
+      letter-spacing: -0.3px;
+    }
+    .tag-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .tag-java {
+      background: #236653;
+      color: #fbf3e0;
+      padding: 6px 20px;
+      border-radius: 40px;
+      font-weight: 700;
+      font-size: 15px;
+      border: 1.5px solid #94cfb9;
+      box-shadow: inset 0 1px 2px #b6e0ce;
+    }
+    .tag-cold {
+      background: #1c4b62;
+      color: #eaf3fc;
+      padding: 6px 20px;
+      border-radius: 40px;
+      font-weight: 700;
+      font-size: 15px;
+      border: 1.5px solid #8fc2da;
+      box-shadow: inset 0 1px 2px #b8ddf0;
+    }
+    .qq-section {
+      padding: 22px 32px 18px;
+      background: rgba(228, 216, 196, 0.45);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      border-bottom: 1px solid #d6cfbc;
+    }
+    .qq-label {
+      font-size: 13px;
+      letter-spacing: 4px;
+      color: #346472;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .qq-big {
+      font-size: 62px;
+      font-weight: 950;
+      line-height: 1;
+      color: #113946;
+      text-shadow: 2px 2px 0 #b8d4e0, 4px 4px 0 #d4dfcb;
+      margin: 8px 0 16px;
+      letter-spacing: 7px;
+      word-break: break-all;
+    }
+    .qr-row {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      flex-wrap: wrap;
+    }
+    .qr-box {
+      width: 108px;
+      height: 108px;
+      background: white;
+      border-radius: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 9px 0 #091c25, 0 14px 20px rgba(0,0,0,0.35);
+      border: 4px solid #f0ebdd;
+      overflow: hidden;
+    }
+    .qr-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 22px;
+    }
+    .qr-info {
+      flex: 1;
+    }
+    .scan-big {
+      font-weight: 850;
+      font-size: 20px;
+      color: #1b4b36;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .scan-desc {
+      color: #205662;
+      font-weight: 600;
+      border-left: 5px solid #4c7f8f;
+      padding-left: 16px;
+      background: rgba(200, 225, 235, 0.3);
+      border-radius: 0 10px 10px 0;
+      line-height: 1.5;
+    }
+    .tri-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      padding: 26px 28px 20px;
+      background: #e7ddcce0;
+    }
+    .feat-card {
+      background: #fffdf6;
+      border-radius: 32px;
+      padding: 20px 8px 16px;
+      text-align: center;
+      box-shadow: 0 8px 0 #9bb0b4, 0 8px 16px #1a363e40;
+      border: 1.5px solid #e1d3bb;
+      transition: all 0.15s ease;
+    }
+    .feat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 0 #85a1a5, 0 14px 22px #0e272f40;
+    }
+    .feat-emoji {
+      font-size: 40px;
+      margin-bottom: 6px;
+    }
+    .feat-title {
+      font-weight: 750;
+      color: #13404e;
+      font-size: 16px;
+    }
+    .feat-desc {
+      font-size: 12px;
+      color: #2a5a60;
+      margin-top: 6px;
+      font-weight: 500;
+    }
+    .info-block {
+      padding: 16px 28px 20px;
+      background: #d9cfbbe0;
+      border-top: 1px solid #bfb9a4;
+      border-bottom: 1px solid #bfb9a4;
+    }
+    .info-title {
+      font-size: 18px;
+      font-weight: 750;
+      color: #1f4452;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px 16px;
+    }
+    .stat-item {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      padding: 6px 0;
+      border-bottom: 1px dashed #9ab0b0;
+    }
+    .stat-label {
+      font-weight: 700;
+      color: #23555e;
+      font-size: 14px;
+      min-width: 100px;
+    }
+    .stat-value {
+      font-weight: 600;
+      color: #0e363e;
+      font-size: 15px;
+    }
+    .member-wall {
+      padding: 18px 28px 22px;
+      background: #d2c7b3d0;
+    }
+    .wall-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .wall-title h3 {
+      font-size: 18px;
+      font-weight: 750;
+      color: #1f4452;
+    }
+    .member-avatars {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .avatar {
+      width: 46px;
+      height: 46px;
+      background: #3e6b7c;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 17px;
+      color: #f2ede0;
+      border: 3px solid #e6ddcb;
+      box-shadow: 0 4px 0 #1a3a44;
+      text-transform: uppercase;
+    }
+    .avatar.small {
+      width: 38px;
+      height: 38px;
+      font-size: 14px;
+    }
+    .online-dot {
+      width: 12px;
+      height: 12px;
+      background: #5fbb68;
+      border-radius: 50%;
+      margin-left: -6px;
+      border: 2px solid #d2c7b3;
+    }
+    .member-note {
+      background: #c0d3cec0;
+      border-radius: 40px;
+      padding: 12px 18px;
+      font-weight: 500;
+      color: #143e41;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border: 1px solid #afc6be;
+    }
+    .news-feed {
+      padding: 20px 28px 24px;
+      background: #c6bb9fe0;
+    }
+    .news-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .news-header h4 {
+      font-size: 18px;
+      font-weight: 750;
+      color: #1d3a44;
+    }
+    .news-badge {
+      background: #2d5f6e;
+      color: #f0f6fa;
+      padding: 4px 14px;
+      border-radius: 50px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .news-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px dashed #8a9f9f;
+    }
+    .news-item:last-child {
+      border-bottom: none;
+    }
+    .news-icon {
+      font-size: 24px;
+      min-width: 36px;
+    }
+    .news-content {
+      flex: 1;
+    }
+    .news-title {
+      font-weight: 750;
+      color: #0f3942;
+      font-size: 15px;
+    }
+    .news-detail {
+      font-size: 13px;
+      color: #2e5863;
+      margin-top: 3px;
+      font-weight: 500;
+    }
+    .gallery {
+      padding: 20px 28px 24px;
+      background: #c1b799e0;
+      border-top: 1px solid #b3aa8e;
+    }
+    .gallery-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .gallery-header h4 {
+      font-size: 18px;
+      font-weight: 750;
+      color: #1d3a44;
+    }
+    .gallery-count {
+      background: #2d5f6e;
+      color: #f0f6fa;
+      padding: 4px 14px;
+      border-radius: 50px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .gallery-item {
+      aspect-ratio: 1;
+      background: #1a3f4e;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 2px solid #d9cfbb;
+      box-shadow: 0 4px 0 #5a706a;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .gallery-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 #5a706a, 0 8px 16px rgba(0,0,0,0.2);
+    }
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .server-row {
+      padding: 16px 28px 20px;
+      background: #b8ae92e0;
+      border-top: 1px solid #a89f86;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .server-box {
+      background: #2e5f6e;
+      border-radius: 24px;
+      padding: 16px 20px;
+      color: #f2ede0;
+    }
+    .server-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .server-title span:first-child {
+      font-size: 22px;
+    }
+    .server-title h5 {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .server-address-row {
+      background: #1a3f4e;
+      border-radius: 16px;
+      padding: 12px 16px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      border: 1px solid #7eafbf;
+    }
+    .server-port-row {
+      background: #1a3f4e;
+      border-radius: 16px;
+      padding: 12px 16px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      border: 1px solid #7eafbf;
+    }
+    .addr-label {
+      font-size: 13px;
+      opacity: 0.8;
+      font-weight: 500;
+    }
+    .addr-value {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Mono', monospace;
+      word-break: break-all;
+    }
+    .port-value {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Mono', monospace;
+    }
+    .copy-btn {
+      background: #5a8b9a;
+      border: none;
+      color: white;
+      padding: 8px 18px;
+      border-radius: 40px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid #aad1e0;
+      box-shadow: 0 3px 0 #1f4a58;
+      transition: all 0.1s;
+    }
+    .copy-btn:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #1f4a58;
+    }
+    .server-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px 24px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .music-bar {
+      max-width: 660px;
+      width: 100%;
+      background: rgba(252, 247, 238, 0.92);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 28px;
+      padding: 14px 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      border: 1px solid #c4d5d8;
+    }
+    .music-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .music-btn {
+      background: #2e5f6e;
+      border: none;
+      color: #f2ede0;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 3px 0 #1a3f4e;
+      transition: all 0.1s;
+      flex-shrink: 0;
+    }
+    .music-btn:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #1a3f4e;
+    }
+    .music-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .music-title {
+      font-weight: 700;
+      font-size: 14px;
+      color: #1a3a44;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .music-artist {
+      font-size: 12px;
+      color: #5a7a7e;
+      font-weight: 500;
+    }
+    .music-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .speed-btn {
+      background: #3e6b7c;
+      border: none;
+      color: #f2ede0;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 2px 0 #1a3f4e;
+      transition: all 0.1s;
+    }
+    .speed-btn:active {
+      transform: translateY(1px);
+      box-shadow: 0 1px 0 #1a3f4e;
+    }
+    .speed-btn.active-speed {
+      background: #d94f4f;
+    }
+    .music-vol {
+      width: 70px;
+      accent-color: #2e5f6e;
+      cursor: pointer;
+    }
+    .progress-row {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .progress-bar {
+      flex: 1;
+      height: 6px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: #c4d5d8;
+      border-radius: 3px;
+      outline: none;
+      cursor: pointer;
+    }
+    .progress-bar::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #2e5f6e;
+      cursor: pointer;
+      box-shadow: 0 2px 0 #1a3f4e;
+    }
+    .time-text {
+      font-size: 11px;
+      color: #5a7a7e;
+      font-weight: 600;
+      min-width: 36px;
+      text-align: center;
+    }
+    .foot {
+      padding: 18px 32px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #a89f86;
+      border-top: 2px solid #969074;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .dynamic-msg {
+      background: #0f3543;
+      color: #deeffa;
+      padding: 8px 22px;
+      border-radius: 60px;
+      font-size: 14px;
+      font-weight: 600;
+      box-shadow: inset 0 1px 6px #9dc9e2;
+    }
+    .drift {
+      display: inline-block;
+      animation: drift 4.5s infinite ease-in-out;
+    }
+    @keyframes drift {
+      0%,100%{ opacity: 0.4; transform: translateY(0px); }
+      50%{ opacity: 1; transform: translateY(-7px); }
+    }
+    .snowflake {
+      font-size: 22px;
+    }
+    .msg-box {
+      width: 100%;
+      background: rgba(252, 247, 238, 0.97);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 48px;
+      box-shadow: 0 35px 55px -12px rgba(0, 0, 0, 0.8), 0 0 0 2px #7eafc5 inset;
+      overflow: hidden;
+      padding: 28px 28px 24px;
+    }
+    .msg-title {
+      font-size: 24px;
+      font-weight: 800;
+      color: #1a3a28;
+      text-shadow: 2px 2px 0 #ede1c2;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .msg-subtitle {
+      font-size: 13px;
+      color: #4a6e6e;
+      margin-bottom: 22px;
+      font-weight: 500;
+    }
+    .msg-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 520px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .msg-card {
+      background: #f5f0e0;
+      border-radius: 24px;
+      padding: 16px 20px;
+      border: 1px solid #d9cfb8;
+      box-shadow: 0 4px 0 #b8ad91;
+      transition: all 0.15s;
+    }
+    .msg-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 5px 0 #b8ad91, 0 6px 12px rgba(0,0,0,0.08);
+    }
+    .msg-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .msg-author {
+      font-weight: 750;
+      color: #1e4a5a;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .msg-avatar {
+      width: 32px;
+      height: 32px;
+      background: #3e6b7c;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 13px;
+      color: #f2ede0;
+    }
+    .msg-time {
+      font-size: 12px;
+      color: #6b8a8a;
+      font-weight: 500;
+    }
+    .msg-body {
+      font-size: 15px;
+      color: #1d3a3a;
+      line-height: 1.6;
+      font-weight: 500;
+    }
+    .msg-empty {
+      text-align: center;
+      padding: 40px 20px;
+      color: #7a9a9a;
+      font-weight: 500;
+    }
+    .msg-empty span {
+      font-size: 48px;
+      display: block;
+      margin-bottom: 10px;
+    }
+    .member-card {
+      background: #f5f0e0;
+      border-radius: 24px;
+      padding: 18px 20px;
+      border: 1px solid #d9cfb8;
+      box-shadow: 0 4px 0 #b8ad91;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .member-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 5px 0 #b8ad91, 0 6px 12px rgba(0,0,0,0.08);
+    }
+    .member-card.owner {
+      background: #fef5d6;
+      border-color: #d4b860;
+      box-shadow: 0 4px 0 #b8963a;
+    }
+    .member-badge {
+      font-size: 12px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+    .badge-owner {
+      background: #d4a830;
+      color: #3d2a00;
+    }
+    .badge-admin {
+      background: #5a8b9a;
+      color: #f2ede0;
+    }
+    .song-card {
+      background: #f5f0e0;
+      border-radius: 20px;
+      padding: 14px 18px;
+      border: 1px solid #d9cfb8;
+      box-shadow: 0 3px 0 #b8ad91;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+    }
+    .song-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 0 #b8ad91, 0 6px 12px rgba(0,0,0,0.08);
+    }
+    .song-card.playing {
+      background: #d4e8e0;
+      border-color: #8abfaa;
+      box-shadow: 0 3px 0 #6a9e8a;
+    }
+    .song-icon {
+      width: 38px;
+      height: 38px;
+      background: #3e6b7c;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: #f2ede0;
+      flex-shrink: 0;
+    }
+    .song-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .song-title {
+      font-weight: 750;
+      color: #1e4a5a;
+      font-size: 15px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .song-artist {
+      font-size: 12px;
+      color: #5a7a7e;
+      font-weight: 500;
+    }
+    .game-card {
+      background: #f5f0e0;
+      border-radius: 20px;
+      padding: 16px 20px;
+      border: 1px solid #d9cfb8;
+      box-shadow: 0 3px 0 #b8ad91;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+    }
+    .game-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 0 #b8ad91, 0 6px 12px rgba(0,0,0,0.08);
+    }
+    .game-icon {
+      width: 44px;
+      height: 44px;
+      background: #3e6b7c;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      color: #f2ede0;
+      flex-shrink: 0;
+    }
+    .game-info {
+      flex: 1;
+    }
+    .game-name {
+      font-weight: 750;
+      color: #1e4a5a;
+      font-size: 16px;
+    }
+    .game-desc {
+      font-size: 12px;
+      color: #5a7a7e;
+      font-weight: 500;
+      margin-top: 2px;
+    }
+    .game-canvas-wrap {
+      background: #1a3f4e;
+      border-radius: 16px;
+      padding: 8px;
+      margin-top: 10px;
+      text-align: center;
+    }
+    .game-canvas-wrap canvas {
+      border-radius: 8px;
+      display: block;
+      margin: 0 auto;
+      max-width: 100%;
+    }
+    .game-controls {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+    .game-score {
+      color: #f2ede0;
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+    .setting-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+      border-bottom: 1px dashed #9ab0b0;
+    }
+    .setting-label {
+      font-weight: 700;
+      color: #23555e;
+      font-size: 15px;
+    }
+    .setting-value {
+      color: #0e363e;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .alt-hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      background-image: url('pic/1.png');
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      border-radius: 24px;
+      overflow: hidden;
+    }
+    .alt-hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.4);
+      z-index: 1;
+    }
+    .alt-hero-content {
+      position: relative;
+      z-index: 2;
+      padding: 40px 24px;
+    }
+    .alt-hero-content h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      color: #ffffff;
+      text-shadow: none;
+      margin-bottom: 16px;
+    }
+    .alt-hero-content p {
+      font-size: 1.1rem;
+      color: rgba(255, 255, 255, 0.85);
+      max-width: 500px;
+      margin: 0 auto 30px;
+    }
+    .alt-btn {
+      display: inline-block;
+      padding: 14px 36px;
+      background-color: #d94f4f;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 600;
+      border: 2px solid transparent;
+      transition: all 0.3s;
+    }
+    .alt-btn:hover {
+      background-color: transparent;
+      color: #fff;
+      border-color: #d94f4f;
+    }
+    .alt-section {
+      padding: 60px 24px;
+      background: #fafafa;
+      text-align: center;
+    }
+    .alt-section h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #2c2c2c;
+      margin-bottom: 12px;
+    }
+    .alt-section .sub {
+      color: #6b6b6b;
+      max-width: 500px;
+      margin: 0 auto 40px;
+    }
+    .alt-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .alt-card {
+      background: #fff;
+      border: 1px solid #eaeaea;
+      border-radius: 12px;
+      padding: 30px 20px;
+      text-align: center;
+    }
+    .alt-card .icon {
+      font-size: 2rem;
+      margin-bottom: 14px;
+    }
+    .alt-card h4 {
+      font-size: 1.1rem;
+      margin-bottom: 6px;
+      color: #2c2c2c;
+    }
+    .alt-card p {
+      color: #6b6b6b;
+      font-size: 0.9rem;
+    }
+    .alt-rules {
+      max-width: 700px;
+      margin: 0 auto;
+      list-style: none;
+      text-align: left;
+    }
+    .alt-rules li {
+      display: flex;
+      gap: 16px;
+      padding: 20px 0;
+      border-bottom: 1px solid #eaeaea;
+    }
+    .alt-rules .num {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #d94f4f;
+      line-height: 1;
+    }
+    .alt-rules h4 {
+      font-size: 1rem;
+      margin-bottom: 4px;
+    }
+    .alt-rules p {
+      color: #6b6b6b;
+      font-size: 0.9rem;
+    }
+    .alt-footer {
+      text-align: center;
+      padding: 40px 24px;
+      border-top: 1px solid #eaeaea;
+      color: #6b6b6b;
+      font-size: 0.85rem;
+      background: #fafafa;
+    }
+    .alt-footer code {
+      background: #eee;
+      padding: 8px 16px;
+      border-radius: 6px;
+      display: inline-block;
+      margin: 10px 0;
+    }
+    .game-play-area {
+      position: relative;
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    /* 模组下载卡片样式 */
+    .mod-card {
+      background: #f5f0e0;
+      border-radius: 20px;
+      padding: 14px 18px;
+      border: 1px solid #d9cfb8;
+      box-shadow: 0 3px 0 #b8ad91;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 10px;
+    }
+    .mod-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 0 #b8ad91, 0 6px 12px rgba(0,0,0,0.08);
+    }
+    .mod-icon {
+      width: 44px;
+      height: 44px;
+      background: #3e6b7c;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      color: #f2ede0;
+      flex-shrink: 0;
+    }
+    .mod-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .mod-name {
+      font-weight: 750;
+      color: #1e4a5a;
+      font-size: 14px;
+      word-break: break-all;
+    }
+    .mod-version {
+      font-size: 11px;
+      color: #5a7a7e;
+      font-weight: 500;
+      margin-top: 2px;
+    }
+    .mod-download-btn {
+      background: #5a8b9a;
+      border: none;
+      color: white;
+      padding: 8px 18px;
+      border-radius: 40px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      box-shadow: 0 3px 0 #1f4a58;
+      transition: all 0.1s;
+      flex-shrink: 0;
+    }
+    .mod-download-btn:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #1f4a58;
+    }
+    /* 比特币页面样式 */
+    .btc-card {
+      background: linear-gradient(135deg, #f7931a 0%, #f9a83a 100%);
+      border-radius: 24px;
+      padding: 24px;
+      text-align: center;
+      color: #fff;
+      margin-bottom: 20px;
+    }
+    .btc-amount {
+      font-size: 56px;
+      font-weight: 800;
+      margin: 10px 0;
+      letter-spacing: 2px;
+    }
+    @media (max-width: 500px) {
+      .box, .msg-box { border-radius: 36px; }
+      h1 { font-size: 34px; }
+      .qq-big { font-size: 46px; letter-spacing: 4px; }
+      .tri-grid { gap: 8px; padding: 20px 16px; }
+      .qr-box { width: 90px; height: 90px; }
+      .stat-grid { grid-template-columns: 1fr; }
+      .addr-value { font-size: 14px; }
+      .port-value { font-size: 18px; }
+      .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+      .msg-box { padding: 20px 16px; }
+      .msg-title { font-size: 20px; }
+      .music-vol { width: 50px; }
+      .lang-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="lang-overlay" id="langOverlay">
+  <div class="lang-modal">
+    <h2 data-key="lang_title">🌐 选择语言 / Select Language</h2>
+    <p data-key="lang_subtitle">请选择你的语言 · Choose your language</p>
+    <div class="lang-grid">
+      <button class="lang-option" onclick="setLang('zh')">中文</button>
+      <button class="lang-option" onclick="setLang('en')">English</button>
+      <button class="lang-option" onclick="setLang('ru')">Русский</button>
+      <button class="lang-option" onclick="setLang('ja')">日本語</button>
+      <button class="lang-option" onclick="setLang('ko')">한국어</button>
+      <button class="lang-option" onclick="setLang('es')">Español</button>
+      <button class="lang-option" onclick="setLang('pt')">Português</button>
+      <button class="lang-option" onclick="setLang('fr')">Français</button>
+      <button class="lang-option" onclick="setLang('it')">Italiano</button>
+      <button class="lang-option" onclick="setLang('de')">Deutsch</button>
+      <button class="lang-option" onclick="setLang('ar')">العربية</button>
+      <button class="lang-option" onclick="setLang('th')">ไทย</button>
+      <button class="lang-option" onclick="setLang('id')">Bahasa Indonesia</button>
+      <button class="lang-option" onclick="setLang('vi')">Tiếng Việt</button>
+      <button class="lang-option" onclick="setLang('my')">မြန်မာ</button>
+      <button class="lang-option" onclick="setLang('lo')">ລາວ</button>
+    </div>
+  </div>
+</div>
+
+<nav class="navbar">
+  <button class="nav-btn active" id="navHome" onclick="switchPage('home')" data-key="nav_home">🏡 主界面</button>
+  <button class="nav-btn" id="navMembers" onclick="switchPage('members')" data-key="nav_members">👥 群成员</button>
+  <button class="nav-btn" id="navMsg" onclick="switchPage('msg')" data-key="nav_msg">💬 留言板</button>
+  <button class="nav-btn" id="navMusic" onclick="switchPage('music')" data-key="nav_music">🎵 群精选音乐</button>
+  <button class="nav-btn" id="navGames" onclick="switchPage('games')" data-key="nav_games">🎮 小游戏</button>
+  <button class="nav-btn" id="navOther" onclick="switchPage('other')" data-key="nav_other">🌐 其他服务器网站</button>
+  <button class="nav-btn" id="navMother" onclick="startMothersDay()" style="background:#ffb3ba;color:#8b0000;border-color:#ff8080;box-shadow:0 3px 0 #cc6666;">💐 母亲节</button>
+  <button class="nav-btn" id="navMods" onclick="switchPage('mods')" style="background:#4a6e5e;color:#fff;">📦 群模组下载</button>
+  <button class="nav-btn" id="navBtc" onclick="switchPage('btc')" style="background:#f7931a; color:#fff;">₿ 比特币</button>
+  <button class="nav-btn" id="navSettings" onclick="switchPage('settings')" data-key="nav_settings">⚙️ 设置</button>
+</nav>
+
+<div class="page show" id="pageHome">
+<div class="box">
+  <div class="top">
+    <div class="frost-row">
+      <span class="frost-icon-large">❄️🧊⛷️</span>
+      <span class="badge-frost" data-key="badge_frost">温泉庄园 · 永冬之地</span>
+      <span class="drift">☃️🌨️</span>
+    </div>
+    <h1 data-key="site_title">Java庄园农家乐<br>极寒之地玩家</h1>
+    <div class="tag-group">
+      <span class="tag-java">☕ Java·庄园</span>
+      <span class="tag-cold">🏔️ 极寒玩家</span>
+      <span class="tag-cold">🔥 篝火已燃</span>
+    </div>
+  </div>
+
+  <div class="qq-section">
+    <div class="qq-label" data-key="qq_label">🏷️ 庄园群号 · 敲门砖</div>
+    <div class="qq-big">1091304030</div>
+    <div class="qr-row">
+      <div class="qr-box"><img src="pic/IMG_7324.jpeg" alt="QQ群二维码"></div>
+      <div class="qr-info">
+        <div class="scan-big" data-key="scan_big">📱 扫一扫 · 加入QQ群</div>
+        <div class="scan-desc" data-key="scan_desc">保存二维码 ➔ QQ扫码<br>「Java庄园农家乐·极寒之地玩家」</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tri-grid">
+    <div class="feat-card"><div class="feat-emoji">📋✨</div><div class="feat-title" data-key="feat1_title">庄园公告</div><div class="feat-desc" data-key="feat1_desc">雪季活动 · 冰钓大赛</div></div>
+    <div class="feat-card"><div class="feat-emoji">📚🧊</div><div class="feat-title" data-key="feat2_title">极寒智库</div><div class="feat-desc" data-key="feat2_desc">攻略 · 种子 · 模组</div></div>
+    <div class="feat-card"><div class="feat-emoji">🧭🗺️</div><div class="feat-title" data-key="feat3_title">快速导航</div><div class="feat-desc" data-key="feat3_desc">主城 · 地狱门 · 农场</div></div>
+  </div>
+
+  <div class="info-block">
+    <div class="info-title"><span data-key="info_title">📊 庄园建设数据</span><span style="font-size:20px;">🏗️</span></div>
+    <div class="stat-grid">
+      <div class="stat-item"><span class="stat-label" data-key="stat1">铁路全长</span><span class="stat-value">3,200m</span></div>
+      <div class="stat-item"><span class="stat-label" data-key="stat2">地狱交通</span><span class="stat-value">1,800m</span></div>
+      <div class="stat-item"><span class="stat-label" data-key="stat3">温室大棚</span><span class="stat-value">24块</span></div>
+      <div class="stat-item"><span class="stat-label" data-key="stat4">村民交易所</span><span class="stat-value">36只</span></div>
+      <div class="stat-item"><span class="stat-label" data-key="stat5">刷怪塔效率</span><span class="stat-value">~12,000/h</span></div>
+      <div class="stat-item"><span class="stat-label" data-key="stat6">存储仓库</span><span class="stat-value">128大箱</span></div>
+      <div class="stat-item"><span class="stat-label" data-key="stat7">冰道滑行</span><span class="stat-value">850m</span></div>
+      <div class="stat-item"><span class="stat-label" data-key="stat8">凋灵骷髅农场</span><span class="stat-value">3联</span></div>
+    </div>
+  </div>
+
+  <div class="member-wall">
+    <div class="wall-title"><h3 data-key="member_title">🏕️ 营地成员</h3><span>🧑‍🌾👩‍🌾</span></div>
+    <div class="member-avatars">
+      <div class="avatar">雪</div><div class="avatar">冰</div><div class="avatar">霜</div><div class="avatar">冬</div>
+      <div class="avatar small">🐺</div><div class="avatar small">🦊</div><div class="avatar small">🐻</div>
+      <div class="online-dot"></div><span style="margin-left:6px;font-weight:600;color:#21555e;">+12</span>
+    </div>
+    <div class="member-note"><span data-key="member_note">⛄ 冰钓队长 / 温泉主 / 伐木工</span><span>🔥 温泉满员</span></div>
+  </div>
+
+  <div class="news-feed">
+    <div class="news-header"><h4 data-key="news_title">📰 庄园快讯</h4><span class="news-badge" data-key="news_badge">新</span></div>
+    <div class="news-item"><div class="news-icon">🚂</div><div class="news-content"><div class="news-title" data-key="news1_title">东线铁路完工</div><div class="news-detail" data-key="news1_desc">新增800m，总长3200m，3个停靠站，自动发车。</div></div></div>
+    <div class="news-item"><div class="news-icon">🐟</div><div class="news-content"><div class="news-title" data-key="news2_title">冰下钓鱼场扩建</div><div class="news-detail" data-key="news2_desc">新增12个钓位，出冰霜行者附魔。冬钓获命名牌x3。</div></div></div>
+    <div class="news-item"><div class="news-icon">🏔️</div><div class="news-content"><div class="news-title" data-key="news3_title">雪山遗迹</div><div class="news-detail" data-key="news3_desc">大型雪山要塞，冰霜骷髅刷怪笼，3人组队。</div></div></div>
+    <div class="news-item"><div class="news-icon">🌾</div><div class="news-content"><div class="news-title" data-key="news4_title">温室丰收</div><div class="news-detail" data-key="news4_desc">马铃薯27组、胡萝卜19组、甜菜32组，面包充足。</div></div></div>
+    <div class="news-item"><div class="news-icon">🔥</div><div class="news-content"><div class="news-title" data-key="news5_title">温泉升级</div><div class="news-detail" data-key="news5_desc">更衣室+篝火区，生命恢复II，21:00夜话。</div></div></div>
+  </div>
+
+  <div class="gallery">
+    <div class="gallery-header"><h4>📸 Java Manor Server Game Pic</h4><span class="gallery-count">37张</span></div>
+    <div class="gallery-grid">
+      <div class="gallery-item"><img src="Java-Manor-Server-Game-Pic/IMG_7091.jpeg" alt="游戏截图" loading="lazy"></div>
+      <div class="gallery-item"><img src="Java-Manor-Server-Game-Pic/IMG_7092.jpeg" alt="游戏截图" loading="lazy"></div>
+      <div class="gallery-item"><img src="Java-Manor-Server-Game-Pic/IMG_7093.jpeg" alt="游戏截图" loading="lazy"></div>
+      <div class="gallery-item"><img src="Java-Manor-Server-Game-Pic/IMG_7094.jpeg" alt="游戏截图" loading="lazy"></div>
+      <div class="gallery-item"><img src="Java-Manor-Server-Game-Pic/IMG_7095.jpeg" alt="游戏截图" loading="lazy"></div>
+      <div class="gallery-item"><img src="Java-Manor-Server-Game-Pic/IMG_7106.jpeg" alt="游戏截图" loading="lazy"></div>
+      <div class="gallery-item"><img src="Java-Manor-Server-Game-Pic/IMG_7107.jpeg" alt="游戏截图" loading="lazy"></div>
+      <div class="gallery-item"><img src="Java-Manor-Server-Game-Pic/IMG_7335.jpeg" alt="游戏截图" loading="lazy"></div>
+      <div class="gallery-item"><img src="Java-Manor-Server-Game-Pic/IMG_7336.jpeg" alt="游戏截图" loading="lazy"></div>
+      <div class="gallery-item"><img src="Java-Manor-Server-Game-Pic/IMG_7338.jpeg" alt="游戏截图" loading="lazy"></div>
+      <div class="gallery-item"><img src="Java-Manor-Server-Game-Pic/IMG_7339.jpeg" alt="游戏截图" loading="lazy"></div>
+      <div class="gallery-item"><img src="Java-Manor-Server-Game-Pic/IMG_7340.jpeg" alt="游戏截图" loading="lazy"></div>
+      <div class="gallery-item"><img src="Java-Manor-Server-Game-Pic/IMG_7341.jpeg" alt="游戏截图" loading="lazy"></div>
+      <div class="gallery-item"><img src="Java-Manor-Server-Game-Pic/IMG_7342.jpeg" alt="游戏截图" loading="lazy"></div>
+      <div class="gallery-item"><img src="Java-Manor-Server-Game-Pic/IMG_7343.jpeg" alt="游戏截图" loading="lazy"></div>
+      <div class="gallery-item"><img src="Java-Manor-Server-Game-Pic/IMG_7382.jpeg" alt="游戏截图" loading="lazy"></div>
+      <div class="gallery-item"><img src="Java-Manor-Server-Game-Pic/IMG_7383.jpeg" alt="游戏截图" loading="lazy"></div>
+      <div class="gallery-item"><img src="Java-Manor-Server-Game-Pic/IMG_7384.jpeg" alt="游戏截图" loading="lazy"></div>
+      <div class="gallery-item"><img src="Java-Manor-Server-Game-Pic/IMG_7385.jpeg" alt="游戏截图" loading="lazy"></div>
+      <div class="gallery-item"><img src="Java-Manor-Server-Game-Pic/IMG_7386.jpeg" alt="游戏截图" loading="lazy"></div>
+      <div class="gallery-item"><img src="Java-Manor-Server-Game-Pic/IMG_7387.jpeg" alt="游戏截图" loading="lazy"></div>
+      <div class="gallery-item"><img src="Java-Manor-Server-Game-Pic/IMG_7388.jpeg" alt="游戏截图" loading="lazy"></div>
+      <div class="gallery-item"><img src="Java-Manor-Server-Game-Pic/IMG_7406.jpeg" alt="游戏截图" loading="lazy"></div>
+      <div class="gallery-item"><img src="Java-Manor-Server-Game-Pic/IMG_7407.jpeg" alt="游戏截图" loading="lazy"></div>
+      <div class="gallery-item"><img src="Java-Manor-Server-Game-Pic/IMG_7408.jpeg" alt="游戏截图" loading="lazy"></div>
+      <div class="gallery-item"><img src="Java-Manor-Server-Game-Pic/61697902DCBF73AB9497DFECD1726537.png" alt="游戏截图" loading="lazy"></div>
+      <div class="gallery-item"><img src="Java-Manor-Server-Game-Pic/AEEFDCCAAA2367791042F4726AB9D522.png" alt="游戏截图" loading="lazy"></div>
+      <div class="gallery-item"><img src="Java-Manor-Server-Game-Pic/3503596588C7B4C4D82F826FC882EFF9.png" alt="游戏截图" loading="lazy"></div>
+      <div class="gallery-item"><img src="Java-Manor-Server-Game-Pic/507C9E994081B3CF6DA5CABE5194B876.png" alt="游戏截图" loading="lazy"></div>
+      <div class="gallery-item"><img src="Java-Manor-Server-Game-Pic/FE5450AA88E9071C85623E43ABC8CE58.png" alt="游戏截图" loading="lazy"></div>
+      <div class="gallery-item"><img src="Java-Manor-Server-Game-Pic/ED95C37BF2FB435C284500BE00A7AD12.png" alt="游戏截图" loading="lazy"></div>
+      <div class="gallery-item"><img src="Java-Manor-Server-Game-Pic/535B3B4276B5371B716BE9BDA66EC096.png" alt="游戏截图" loading="lazy"></div>
+      <div class="gallery-item"><img src="Java-Manor-Server-Game-Pic/D35B1859A5C214509CD4936748CF7E88.png" alt="游戏截图" loading="lazy"></div>
+      <div class="gallery-item"><img src="Java-Manor-Server-Game-Pic/268C0D14969E862F5A43ED3FB6B740B4.png" alt="游戏截图" loading="lazy"></div>
+      <div class="gallery-item"><img src="Java-Manor-Server-Game-Pic/3A69D6756CFD4EB880739D41C6A2F49E.png" alt="游戏截图" loading="lazy"></div>
+      <div class="gallery-item"><img src="Java-Manor-Server-Game-Pic/4A2E42F0EEC5AEC1A6BB6A43A959D334.png" alt="游戏截图" loading="lazy"></div>
+      <div class="gallery-item"><img src="Java-Manor-Server-Game-Pic/5200E9E2BF555733A71AA4672B35CFFC.png" alt="游戏截图" loading="lazy"></div>
+      <div style="grid-column: 1 / -1; text-align: center; margin: 20px 0 10px 0; padding-top: 10px; border-top: 2px solid #7eafbf;">
+        <span style="background: #2e5f6e; color: #f2ede0; padding: 8px 20px; border-radius: 30px; font-weight: 700; font-size: 14px;">💾 HacknetOS_Server 截图</span>
+      </div>
+      <div class="gallery-item"><img src="HacknetOS_Server/IMG_7564.jpeg" alt="游戏截图" loading="lazy"></div>
+      <div class="gallery-item"><img src="HacknetOS_Server/IMG_7565.jpeg" alt="游戏截图" loading="lazy"></div>
+      <div class="gallery-item"><img src="HacknetOS_Server/IMG_7566.jpeg" alt="游戏截图" loading="lazy"></div>
+      <div class="gallery-item"><img src="HacknetOS_Server/IMG_7567.jpeg" alt="游戏截图" loading="lazy"></div>
+      <div class="gallery-item"><img src="HacknetOS_Server/IMG_7568.jpeg" alt="游戏截图" loading="lazy"></div>
+      <div class="gallery-item"><img src="HacknetOS_Server/IMG_7569.jpeg" alt="游戏截图" loading="lazy"></div>
+    </div>
+  </div>
+
+  <div class="server-row">
+    <div class="server-box"><div class="server-title"><span>🖥️</span><h5 data-key="server1">村庄农家乐（Java/基岩版服务器）</h5><span style="margin-left:auto;font-size:13px;">🟢</span></div><div class="server-address-row"><div style="flex:1;"><div class="addr-label">地址</div><div class="addr-value">QM202604042011.aternos.me</div></div><button class="copy-btn" id="copyAddr1">📋 复制</button></div><div class="server-port-row"><div style="flex:1;"><div class="addr-label">端口</div><div class="port-value">12437</div></div><button class="copy-btn" id="copyPort1">📋 复制</button></div><div class="server-meta"><div class="meta-item"><span>☕</span><span>PaperMC</span></div><div class="meta-item"><span>📦</span><span>1.21.11</span></div><div class="meta-item"><span>🔄</span><span>不自动更新</span></div></div></div>
+    <div class="server-box"><div class="server-title"><span>💾</span><h5 data-key="server2">空岛服务器（Java版服务器）</h5><span style="margin-left:auto;font-size:13px;">🟢</span></div><div class="server-address-row"><div style="flex:1;"><div class="addr-label">地址</div><div class="addr-value">fm.rainplay.cn</div></div><button class="copy-btn" id="copyAddr2">📋 复制</button></div><div class="server-port-row"><div style="flex:1;"><div class="addr-label">端口</div><div class="port-value">17901</div></div><button class="copy-btn" id="copyPort2">📋 复制</button></div><div class="server-meta"><div class="meta-item"><span>☕</span><span>PaperMC</span></div><div class="meta-item"><span>📦</span><span>1.21.8</span></div><div class="meta-item"><span>🔄</span><span>不自动更新</span></div></div></div>
+    <div class="server-box"><div class="server-title"><span>💀</span><h5>2b2t（Java版服务器）</h5><span style="margin-left:auto;font-size:13px;">🟢</span></div><div class="server-address-row"><div style="flex:1;"><div class="addr-label">地址</div><div class="addr-value">2b2t.org</div></div><button class="copy-btn" id="copyAddr3">📋 复制</button></div><div class="server-port-row"><div style="flex:1;"><div class="addr-label">端口</div><div class="port-value">25565</div></div><button class="copy-btn" id="copyPort3">📋 复制</button></div><div class="server-meta"><div class="meta-item"><span>📦</span><span>1.12.2-1.21</span></div></div></div>
+    <div class="server-box"><div class="server-title"><span>🏴</span><h5>3c3u（Java版服务器）</h5><span style="margin-left:auto;font-size:13px;">🟢</span></div><div class="server-address-row"><div style="flex:1;"><div class="addr-label">地址</div><div class="addr-value">3c3u.org</div></div><button class="copy-btn" id="copyAddr4">📋 复制</button></div><div class="server-port-row"><div style="flex:1;"><div class="addr-label">端口</div><div class="port-value">25565</div></div><button class="copy-btn" id="copyPort4">📋 复制</button></div><div class="server-meta"><div class="meta-item"><span>📦</span><span>1.12.2-1.21</span></div></div></div>
+    <div class="server-box"><div class="server-title"><span>⚔️</span><h5>5C5U · 无规则无政府服务器（Java/基岩版）</h5><span style="margin-left:auto;font-size:13px;">🟢</span></div><div class="server-address-row"><div style="flex:1;"><div class="addr-label">地址</div><div class="addr-value">5C5U.aternos.me</div></div><button class="copy-btn" onclick="copyToClipboard('5C5U.aternos.me', this)">📋 复制</button></div><div class="server-port-row"><div style="flex:1;"><div class="addr-label">端口</div><div class="port-value">26591</div></div><button class="copy-btn" onclick="copyToClipboard('26591', this)">📋 复制</button></div><div class="server-meta"><div class="meta-item"><span>💀</span><span>无规则 · 无政府</span></div><div class="meta-item"><span>☕</span><span>PaperMC</span></div><div class="meta-item"><span>📦</span><span>1.21.11</span></div><div class="meta-item"><span>🔄</span><span>不自动更新</span></div><div class="meta-item"><span>🔄</span><span>互通 | GeyserMC</span></div></div></div>
+    <div class="server-box"><div class="server-title"><span>☁️</span><h5>雨云 · 互通服务器（Java/基岩版）</h5><span style="margin-left:auto;font-size:13px;">🟢</span></div><div class="server-address-row"><div style="flex:1;"><div class="addr-label">地址</div><div class="addr-value">udpsq.rainplay.cn</div></div><button class="copy-btn" onclick="copyToClipboard('udpsq.rainplay.cn', this)">📋 复制</button></div><div class="server-port-row"><div style="flex:1;"><div class="addr-label">端口</div><div class="port-value">46271</div></div><button class="copy-btn" onclick="copyToClipboard('46271', this)">📋 复制</button></div><div class="server-meta"><div class="meta-item"><span>☕</span><span>PaperMC</span></div><div class="meta-item"><span>📦</span><span>1.21.11</span></div><div class="meta-item"><span>🔄</span><span>不自动更新</span></div><div class="meta-item"><span>🔄</span><span>互通 | GeyserMC</span></div></div></div>
+  </div>
+
+  <div class="foot">
+    <div style="display:flex;align-items:center;gap:8px;"><span>版本 1.26.28</span><span class="dynamic-msg" id="dynText">❄️ 极寒之地</span></div>
+    <div style="display:flex;gap:6px;align-items:center;"><span class="snowflake">🏔️❄️</span><span style="font-weight:600;color:#1d4035;">🔥 温泉已备好</span></div>
+  </div>
+</div>
+</div>
+
+<div class="page" id="pageMembers">
+  <div class="msg-box">
+    <div class="msg-title" data-key="members_title">👥 QQ群主 / 管理员</div>
+    <div class="msg-subtitle">Java庄园农家乐 · 极寒之地玩家</div>
+    <div class="msg-list">
+      <div class="member-card owner"><div class="msg-avatar">👑</div><div style="flex:1;">在周末睡觉（jay zhou）<br><small>群主</small></div><span class="member-badge badge-owner">群主</span></div>
+      <div class="member-card"><div class="msg-avatar">🍎</div><div style="flex:1;">CEO System Qingmeng Apple<br><small>管理员</small></div><span class="member-badge badge-admin">管理员</span></div>
+      <div class="member-card"><div class="msg-avatar">🌿</div><div style="flex:1;">逢一场春<br><small>管理员</small></div><span class="member-badge badge-admin">管理员</span></div>
+      <div class="member-card"><div class="msg-avatar">💾</div><div style="flex:1;">HacknetOS_Backups_Server<br><small>管理员</small></div><span class="member-badge badge-admin">管理员</span></div>
+      <div class="member-card"><div class="msg-avatar">🕊️</div><div style="flex:1;">久违.<br><small>管理员</small></div><span class="member-badge badge-admin">管理员</span></div>
+      <div class="member-card"><div class="msg-avatar">🐺</div><div style="flex:1;">Wemmbu<br><small>管理员</small></div><span class="member-badge badge-admin">管理员</span></div>
+      <div class="member-card"><div class="msg-avatar">🌟</div><div style="flex:1;">星河hhx<br><small>管理员</small></div><span class="member-badge badge-admin">管理员</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="pageMsg">
+  <div class="msg-box">
+    <div class="msg-title" data-key="msg_title">💬 留言板</div>
+    <div class="msg-subtitle">data/messages-1</div>
+    <div class="msg-list" id="msgList"><div class="msg-empty">📝 加载中…</div></div>
+  </div>
+</div>
+
+<div class="page" id="pageMusic">
+  <div class="msg-box">
+    <div class="msg-title" data-key="music_title">🎵 群精选音乐</div>
+    <div class="msg-subtitle">点击播放 · 进度条 · 倍速</div>
+    <div class="msg-list" id="songList"></div>
+  </div>
+</div>
+
+<div class="page" id="pageGames">
+  <div class="msg-box">
+    <div class="msg-title" data-key="games_title">🎮 小游戏</div>
+    <div class="msg-subtitle">点击游戏开始游玩</div>
+    <div class="msg-list" id="gameList">
+      <div class="game-card" onclick="startGame('snake')"><div class="game-icon">🐍</div><div class="game-info"><div class="game-name">贪吃蛇</div><div class="game-desc">经典贪吃蛇游戏</div></div></div>
+      <div class="game-card" onclick="startGame('tetris')"><div class="game-icon">🧱</div><div class="game-info"><div class="game-name">俄罗斯方块</div><div class="game-desc">经典俄罗斯方块</div></div></div>
+      <div class="game-card" onclick="startGame('minesweeper')"><div class="game-icon">💣</div><div class="game-info"><div class="game-name">扫雷</div><div class="game-desc">找出所有地雷</div></div></div>
+      <div class="game-card" onclick="startGame('memory')"><div class="game-icon">🃏</div><div class="game-info"><div class="game-name">记忆翻牌</div><div class="game-desc">翻牌配对</div></div></div>
+      <div class="game-card" onclick="startGame('breakout')"><div class="game-icon">🎯</div><div class="game-info"><div class="game-name">打砖块</div><div class="game-desc">打碎所有砖块</div></div></div>
+      <div class="game-card" onclick="startGame('pong')"><div class="game-icon">🏓</div><div class="game-info"><div class="game-name">乒乓球</div><div class="game-desc">经典乒乓球</div></div></div>
+      <div class="game-card" onclick="startGame('racing')"><div class="game-icon">🏎️</div><div class="game-info"><div class="game-name">赛车竞速</div><div class="game-desc">躲避障碍</div></div></div>
+      <div class="game-card" onclick="startGame('shooter')"><div class="game-icon">✈️</div><div class="game-info"><div class="game-name">飞机大战</div><div class="game-desc">射击敌机</div></div></div>
+      <div class="game-card" onclick="startGame('2048')"><div class="game-icon">🧩</div><div class="game-info"><div class="game-name">2048</div><div class="game-desc">数字合并</div></div></div>
+      <div class="game-card" onclick="startGame('tictactoe')"><div class="game-icon">🎮</div><div class="game-info"><div class="game-name">井字棋</div><div class="game-desc">经典井字棋</div></div></div>
+      <div class="game-card" onclick="startGame('dino')"><div class="game-icon">🦖</div><div class="game-info"><div class="game-name">谷歌恐龙</div><div class="game-desc">小恐龙跑酷</div></div></div>
+      <div class="game-card" onclick="startGame('bowling')"><div class="game-icon">🎳</div><div class="game-info"><div class="game-name">保龄球</div><div class="game-desc">经典保龄球</div></div></div>
+    </div>
+    <div id="gamePlayArea" style="display:none; margin-top:16px;">
+      <div class="game-canvas-wrap" id="gameCanvasWrap"></div>
+      <div class="game-score" id="gameScore"></div>
+      <div class="game-controls"><button class="copy-btn" onclick="stopGame()">返回列表</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="pageMods">
+  <div class="msg-box">
+    <div class="msg-title" style="display: flex; justify-content: space-between; align-items: center;">
+      <span>📦 群模组下载</span>
+      <span style="font-size: 14px; background: #2e5f6e; padding: 4px 12px; border-radius: 20px;">26个模组</span>
+    </div>
+    <div class="msg-subtitle">点击下载 · 模组文件（jar-mod文件夹）</div>
+    <div class="msg-list" id="modsList" style="max-height: 500px;"></div>
+  </div>
+</div>
+
+<!-- 比特币炫耀页面 -->
+<div class="page" id="pageBtc">
+  <div class="msg-box">
+    <div class="msg-title" style="display: flex; justify-content: space-between; align-items: center;">
+      <span>₿ 比特币庄园金库</span>
+      <span style="font-size: 16px; background: #f7931a; padding: 6px 16px; border-radius: 30px; color: #fff; font-weight: 700;" id="btcBalanceDisplay">₿ 0</span>
+    </div>
+    <div class="msg-subtitle">每天免费领取比特币 · 炫耀你的财富</div>
+    <div style="background: linear-gradient(135deg, #f7931a 0%, #f9a83a 100%); border-radius: 24px; padding: 24px; text-align: center; color: #fff; margin-bottom: 20px;">
+      <div style="font-size: 14px; opacity: 0.9;">你的比特币余额</div>
+      <div style="font-size: 56px; font-weight: 800; margin: 8px 0; letter-spacing: 2px;" id="btcBalanceLarge">0</div>
+      <div style="font-size: 12px; opacity: 0.8;">≈ 无限价值</div>
+    </div>
+    <div style="background: #d9cfbbe0; border-radius: 24px; padding: 20px; margin-bottom: 20px;">
+      <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;">
+        <button class="copy-btn" id="signBtcBtn" onclick="signBitcoin()" style="background: #f7931a; box-shadow: 0 3px 0 #b85e00;">✅ 每日领取</button>
+        <button class="copy-btn" onclick="shareBitcoin()" style="background: #2e5f6e;">📢 炫耀比特币</button>
+      </div>
+      <div style="margin-top: 16px; text-align: center; font-size: 12px; color: #5a7a7e;" id="signStatus">加载中...</div>
+      <div style="margin-top: 8px; text-align: center; font-size: 11px; color: #5a7a7e;" id="signRewardInfo"></div>
+    </div>
+    <div style="background: #2e5f6e; border-radius: 20px; padding: 16px; text-align: center; color: #f2ede0;">
+      <div style="font-size: 13px; opacity: 0.9;">💡 比特币小知识</div>
+      <div style="font-size: 12px; margin-top: 8px;">比特币总量只有2100万枚，你的每一枚都很珍贵！</div>
+      <div style="font-size: 11px; margin-top: 12px; opacity: 0.7;">数据保存在你的浏览器中，换设备后需重新领取</div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="pageOther">
+  <section class="alt-hero"><div class="alt-hero-content"><h1>只为Java</h1><p>特色空岛单方块生存 | 简单有趣庄园农家乐</p></div></section>
+  <div class="alt-footer"><p>fm.rainplay.cn:17901 | 空岛服务器 ; fm.rainplay.cn:46271 | 庄园农家乐</p><p>1090578436 | 官方一群 ; 1091304030 | 非官方二群</p></div>
+</div>
+
+<div class="page" id="pageSettings">
+  <div class="msg-box">
+    <div class="msg-title" data-key="settings_title">⚙️ 设置</div>
+    <div class="msg-subtitle" data-key="ver_label">版本 1.26.28</div>
+    <div class="msg-list">
+      <div class="setting-item"><span class="setting-label" data-key="ver_label">版本号</span><span class="setting-value">1.26.28</span></div>
+      <div class="setting-item"><span class="setting-label" data-key="settings_lang">语言</span><button class="copy-btn" onclick="document.getElementById('langOverlay').classList.remove('hidden')" data-key="settings_change">切换语言</button></div>
+      <div class="setting-item"><span class="setting-label">设备信息</span><span class="setting-value" id="deviceInfoLoading">加载中...</span></div>
+    </div>
+    <div class="msg-list" id="deviceInfoList" style="margin-top:10px;"></div>
+  </div>
+</div>
+
+<div class="music-bar">
+  <div class="music-row">
+    <button class="music-btn" id="playBtn" onclick="togglePlay()">▶️</button>
+    <div class="music-info">
+      <div class="music-title" id="currentTitle">Lovely</div>
+      <div class="music-artist" id="currentArtist">Billie Eilish & Khalid</div>
+    </div>
+    <div class="music-controls">
+      <button class="speed-btn active-speed" onclick="setSpeed(1)">1x</button>
+      <button class="speed-btn" onclick="setSpeed(1.5)">1.5x</button>
+      <button class="speed-btn" onclick="setSpeed(2)">2x</button>
+      <button class="speed-btn" onclick="setSpeed(3)">3x</button>
+      <button class="speed-btn" onclick="setSpeed(4)">4x</button>
+      <button class="speed-btn" onclick="setSpeed(5)">5x</button>
+      <button class="speed-btn" onclick="setSpeed(6)">6x</button>
+      <button class="speed-btn" onclick="setSpeed(7)">7x</button>
+      <button class="speed-btn" onclick="setSpeed(8)">8x</button>
+      <button class="speed-btn" onclick="setSpeed(9)">9x</button>
+      <button class="speed-btn" onclick="setSpeed(10)">10x</button>
+      <input type="number" class="speed-input" id="speedInput" value="1" min="1" max="100" step="0.1" onchange="setSpeed(this.value)" placeholder="1-100">
+      <input type="range" class="music-vol" id="volSlider" min="0" max="100" value="30" oninput="updateVolume(this.value)">
+    </div>
+  </div>
+  <div class="progress-row">
+    <span class="time-text" id="currentTime">0:00</span>
+    <input type="range" class="progress-bar" id="progressBar" min="0" max="100" value="0" oninput="seekMusic(this.value)">
+    <span class="time-text" id="totalTime">0:00</span>
+  </div>
+</div>
+
+<audio id="bgMusic" loop></audio>
+
+<script>
+function copyToClipboard(text, btn) {
+  navigator.clipboard.writeText(text).then(function() {
+    var originalText = btn.innerHTML;
+    btn.innerHTML = '✅ 已复制';
+    setTimeout(function() { btn.innerHTML = originalText; }, 2000);
+  }).catch(function() { btn.innerHTML = '❌ 失败'; setTimeout(function() { btn.innerHTML = '📋 复制'; }, 2000); });
+}
+
+function updateVolume(val) { var m = document.getElementById('bgMusic'); if(m) m.volume = val/100; }
+function seekMusic(val) { var m = document.getElementById('bgMusic'); if(m) m.currentTime = val; }
+
+// ========== 比特币系统（仅本地存储）==========
+var bitcoinBalance = 0;
+var lastSignDate = '';
+var signStreak = 0;
+
+function loadBitcoinData() {
+  var savedBalance = localStorage.getItem('bitcoin_balance');
+  var savedLastSign = localStorage.getItem('bitcoin_last_sign');
+  var savedStreak = localStorage.getItem('bitcoin_streak');
+  bitcoinBalance = savedBalance ? parseInt(savedBalance) : 0;
+  lastSignDate = savedLastSign || '';
+  signStreak = savedStreak ? parseInt(savedStreak) : 0;
+  updateBitcoinDisplay();
+  updateSignStatus();
+}
+
+function saveBitcoinData() {
+  localStorage.setItem('bitcoin_balance', bitcoinBalance);
+  localStorage.setItem('bitcoin_last_sign', lastSignDate);
+  localStorage.setItem('bitcoin_streak', signStreak);
+}
+
+function updateBitcoinDisplay() {
+  var balanceEl = document.getElementById('btcBalanceDisplay');
+  var balanceLargeEl = document.getElementById('btcBalanceLarge');
+  if (balanceEl) balanceEl.innerHTML = '₿ ' + bitcoinBalance;
+  if (balanceLargeEl) balanceLargeEl.innerHTML = bitcoinBalance;
+}
+
+function updateSignStatus() {
+  var today = new Date().toDateString();
+  var statusEl = document.getElementById('signStatus');
+  var btnEl = document.getElementById('signBtcBtn');
+  var rewardInfoEl = document.getElementById('signRewardInfo');
+  if (lastSignDate === today) {
+    if (statusEl) statusEl.innerHTML = '✅ 今日已领取 · 连续 ' + signStreak + ' 天';
+    if (btnEl) { btnEl.disabled = true; btnEl.style.opacity = '0.5'; }
+  } else {
+    if (statusEl) statusEl.innerHTML = '⏳ 今日未领取';
+    if (btnEl) { btnEl.disabled = false; btnEl.style.opacity = '1'; }
+  }
+  var nextReward = signStreak > 0 ? Math.min(10 + (signStreak + 1) * 2, 50) : 10;
+  if (rewardInfoEl) rewardInfoEl.innerHTML = '💰 连续领取 ' + signStreak + ' 天，下次可得 ₿' + nextReward;
+}
+
+function signBitcoin() {
+  var today = new Date().toDateString();
+  if (lastSignDate === today) { alert('今天已经领过比特币了！明天再来吧～'); return; }
+  var yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
+  var yesterdayStr = yesterday.toDateString();
+  var reward = 10;
+  if (lastSignDate === yesterdayStr) { signStreak++; reward = Math.min(10 + signStreak * 2, 50); }
+  else { signStreak = 1; reward = 10; }
+  bitcoinBalance += reward;
+  lastSignDate = today;
+  saveBitcoinData();
+  updateBitcoinDisplay();
+  updateSignStatus();
+  alert('🎉 领取成功！获得 ₿' + reward + '\n你的比特币余额：₿' + bitcoinBalance);
+}
+
+function shareBitcoin() {
+  var msg = '🎉 我在「Java庄园农家乐」拥有 ₿' + bitcoinBalance + ' 比特币！快来一起领取吧！';
+  if (navigator.share) navigator.share({ title: '庄园比特币', text: msg });
+  else { navigator.clipboard.writeText(msg); alert('已复制到剪贴板，可以发到群里炫耀啦！\n\n' + msg); }
+}
+
+// ========== 母亲节 ==========
+function startMothersDay() {
+  document.querySelectorAll('.nav-btn').forEach(function(el){el.classList.remove('active');});
+  document.querySelectorAll('.page, .page-wide').forEach(function(el){el.classList.remove('show');});
+  document.getElementById('navMother').classList.add('active');
+  var motherPage = document.createElement('div');
+  motherPage.id = 'pageMother';
+  motherPage.className = 'page show';
+  motherPage.style.cssText = 'max-width:660px;width:100%;';
+  motherPage.innerHTML = '<div class="msg-box" style="background:linear-gradient(135deg,#fff0f0,#ffe0e5);border:2px solid #ff8080;"><div class="msg-title" style="text-align:center;color:#8b0000;">💐 母亲节快乐 💐</div><div class="msg-subtitle" style="text-align:center;color:#cc4455;">2026.5.10 · 妈妈幸苦了</div><div style="text-align:center;font-size:clamp(2rem,8vw,4rem);padding:20px;animation:float 2s infinite;">🌸🌷🌺🌻🌼💕</div><p style="text-align:center;color:#8b0000;font-size:1rem;padding:0 20px 20px;">世界上最伟大的爱 · 母爱无疆</p><div style="text-align:center;padding-bottom:20px;"><button onclick="closeMothersDay()" style="padding:12px 40px;font-size:1rem;background:#ff6b81;color:#fff;border:none;border-radius:30px;cursor:pointer;font-weight:700;">✕ 返回主页</button></div></div>';
+  var style = document.createElement('style');
+  style.textContent = '@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-15px)}}';
+  motherPage.appendChild(style);
+  document.querySelector('.navbar').insertAdjacentElement('afterend', motherPage);
+  for (var i = 0; i < 30; i++) {
+    setTimeout(function() {
+      var petal = document.createElement('span');
+      petal.textContent = ['🌸','🌷','💮','🏵️','🌺','🌻','🌼','💐'][Math.floor(Math.random() * 8)];
+      petal.style.cssText = 'position:fixed;top:-40px;left:' + Math.random() * 100 + '%;font-size:' + (16 + Math.random() * 24) + 'px;z-index:9999;animation:petalFall ' + (Math.random() * 3 + 2) + 's linear forwards;pointer-events:none;';
+      document.body.appendChild(petal);
+      setTimeout(function(){ petal.remove(); }, 5000);
+    }, i * 150);
+  }
+  var fallStyle = document.createElement('style');
+  fallStyle.textContent = '@keyframes petalFall{to{top:110vh;transform:rotate(360deg);opacity:0}}';
+  document.body.appendChild(fallStyle);
+}
+function closeMothersDay() { var motherPage = document.getElementById('pageMother'); if (motherPage) motherPage.remove(); switchPage('home'); }
+
+// ========== 设备检测 ==========
+function showDeviceInfo() {
+  var ua = navigator.userAgent;
+  var isAndroid = /Android/.test(ua);
+  var isIOS = /iPhone|iPad|iPod/.test(ua);
+  var isMac = /Macintosh|MacIntel/.test(ua) && !isIOS;
+  var isWindows = /Windows/.test(ua);
+  var isLinux = /Linux/.test(ua) && !isAndroid;
+  var cpuCores = navigator.hardwareConcurrency || 0;
+  var deviceMemory = navigator.deviceMemory || 0;
+  var screenWidth = window.screen.width;
+  var screenHeight = window.screen.height;
+  var pixelRatio = window.devicePixelRatio || 1;
+  var deviceName = '';
+  var chipName = '';
+  var osVersion = '';
+  var memoryText = '';
+  var jailbreakText = '否/无根越狱';
+  var pw = Math.round(screenWidth * pixelRatio);
+  var ph = Math.round(screenHeight * pixelRatio);
+  var touchPoints = navigator.maxTouchPoints || 0;
+  var isTablet = false;
+  var colorDepth = screen.colorDepth || 0;
+  var orientation = screen.orientation ? screen.orientation.type : '未知';
+
+  if (isIOS) {
+    var iosMatch = ua.match(/OS (\d+)[._](\d+)(?:[._](\d+))?/);
+    if (iosMatch) { if (iosMatch[3]) osVersion = 'iOS ' + iosMatch[1] + '.' + iosMatch[2] + '.' + iosMatch[3]; else osVersion = 'iOS ' + iosMatch[1] + '.' + iosMatch[2]; }
+    else osVersion = 'iOS';
+    var jailbreakIndicators = ['Cydia', 'Sileo', 'Zebra', 'Installer', 'Checkra1n', 'unc0ver', 'Odyssey', 'Taurine', 'Chimera', 'Electra', 'palera1n', 'Dopamine', 'XinaA15', 'Fugu15', 'ellekit', 'jailbreakd', '/var/jb', 'Substitute', 'Substrate'];
+    var isJailbroken = false;
+    for (var i = 0; i < jailbreakIndicators.length; i++) if (ua.indexOf(jailbreakIndicators[i]) !== -1) { isJailbroken = true; break; }
+    if (isJailbroken) jailbreakText = '⚠️ 已越狱';
+  } else if (isAndroid) {
+    var androidMatch = ua.match(/Android (\d+)(?:\.(\d+))?(?:\.(\d+))?/);
+    osVersion = androidMatch ? 'Android ' + androidMatch[1] + (androidMatch[2] ? '.' + androidMatch[2] : '') : 'Android';
+    var rootIndicators = ['Magisk', 'SuperSU', 'KingRoot', 'Xposed', 'su', '/system/bin/su'];
+    var isRooted = false;
+    for (var i = 0; i < rootIndicators.length; i++) if (ua.indexOf(rootIndicators[i]) !== -1) { isRooted = true; break; }
+    jailbreakText = isRooted ? '⚠️ 已Root' : '否/隐藏root';
+  } else if (isWindows) {
+    var winMatch = ua.match(/Windows NT (\d+\.\d+)/);
+    var winVersions = { '10.0': '10/11', '6.3': '8.1', '6.2': '8', '6.1': '7' };
+    osVersion = winMatch ? 'Windows ' + (winVersions[winMatch[1]] || winMatch[1]) : 'Windows';
+  } else if (isMac) {
+    var macMatch = ua.match(/Mac OS X (\d+[._]\d+)/);
+    osVersion = macMatch ? 'macOS ' + macMatch[1].replace(/_/g, '.') : 'macOS';
+  } else if (isLinux) osVersion = 'Linux';
+
+  if (isIOS) isTablet = /iPad/.test(ua) || (touchPoints >= 4 && (pw / ph > 0.6 && pw / ph < 1.5));
+  else if (isAndroid) isTablet = screenWidth >= 600 && screenHeight >= 600;
+
+  if (isIOS) {
+    var iosVerNum = 0;
+    if (osVersion) { var iosVerMatch = osVersion.match(/iOS (\d+)/); if (iosVerMatch) iosVerNum = parseInt(iosVerMatch[1], 10); }
+    if (pw === 1640 && ph === 2360) {
+      if (iosVerNum >= 26 || ua.indexOf('iPad11') !== -1 || ua.indexOf('iPad 11') !== -1) { deviceName = 'iPad 11（A16）'; chipName = 'A16'; memoryText = '4~6GB'; }
+      else { deviceName = 'iPad Air 4/5'; chipName = 'A14/A15/M1'; memoryText = '4~8GB'; }
+    }
+    else if (pw === 1290 && ph === 2796 && iosVerNum >= 19) { deviceName = 'iPhone 17 Pro Max'; chipName = 'A19 Pro'; memoryText = '8~12GB'; }
+    else if (pw === 1179 && ph === 2556 && iosVerNum >= 19) { deviceName = 'iPhone 17 Pro'; chipName = 'A19 Pro'; memoryText = '8GB'; }
+    else if (pw === 1170 && ph === 2532 && iosVerNum >= 19) { deviceName = 'iPhone 17'; chipName = 'A19'; memoryText = '6~8GB'; }
+    else if (pw === 1290 && ph === 2796) { deviceName = 'iPhone 15/16 Pro Max'; chipName = 'A17 Pro / A18 Pro'; memoryText = '8GB'; }
+    else if (pw === 1179 && ph === 2556) { deviceName = 'iPhone 15 Pro / 16 Pro'; chipName = 'A17 Pro / A18 Pro'; memoryText = '8GB'; }
+    else if (pw === 1170 && ph === 2532) { deviceName = 'iPhone 12/13/14'; chipName = 'A14/A15/A16'; memoryText = '4~6GB'; }
+    else if (pw === 1284 && ph === 2778) { deviceName = 'iPhone 12/13 Pro Max / 14 Plus'; chipName = 'A14/A15/A16'; memoryText = '6GB'; }
+    else if (pw === 640 && ph === 960) { deviceName = 'iPhone 4 / 4s'; chipName = 'A4 / A5'; memoryText = '512MB'; }
+    else if (pw === 640 && ph === 1136) { deviceName = 'iPhone 5 / 5c / 5s / SE 1代'; chipName = 'A6 / A7 / A8'; memoryText = '1GB'; }
+    else if (pw === 750 && ph === 1334) { deviceName = 'iPhone 6/6s/7/8/SE 2/3代'; chipName = 'A8/A9/A10/A13/A15'; memoryText = '2~4GB'; }
+    else if (pw === 1242 && ph === 2208) { deviceName = 'iPhone 6/6s/7/8 Plus'; chipName = 'A8/A9/A10/A11'; memoryText = '2~3GB'; }
+    else if (pw === 1125 && ph === 2436) { deviceName = 'iPhone X/XS/11 Pro/12 mini/13 mini'; chipName = 'A11/A12/A13/A14/A15'; memoryText = '3~6GB'; }
+    else if (pw === 828 && ph === 1792) { deviceName = 'iPhone XR / 11'; chipName = 'A12 / A13'; memoryText = '3~4GB'; }
+    else if (pw === 768 && ph === 1024) { deviceName = 'iPad 1/2/mini 1代'; chipName = 'A4 / A5'; memoryText = '256~512MB'; }
+    else if (pw === 1536 && ph === 2048) { deviceName = 'iPad 3/4/Air1-2/mini2-5'; chipName = 'A6X/A7/A8X/A12'; memoryText = '1~3GB'; }
+    else if (pw === 1668 && ph === 2388) { deviceName = 'iPad Pro 11寸'; chipName = 'A12X/M1/M2/M3/M4'; memoryText = '6~16GB'; }
+    else if (pw === 2048 && ph === 2732) { deviceName = 'iPad Pro 12.9/13寸'; chipName = 'A9X/M1/M2/M3/M4/M5'; memoryText = '4~16GB'; }
+    else if (pw === 1620 && ph === 2160) { deviceName = 'iPad 8/9/10代'; chipName = 'A12/A13/A14'; memoryText = '3~4GB'; }
+    else if (pw === 1488 && ph === 2266) { deviceName = 'iPad mini 6/7代'; chipName = 'A15/A17 Pro'; memoryText = '4~8GB'; }
+    else if (pw === 640 && ph === 960 && ua.indexOf('iPod') !== -1) { deviceName = 'iPod touch 4/5代'; chipName = 'A4/A5'; memoryText = '256~512MB'; }
+    else if (pw === 640 && ph === 1136 && ua.indexOf('iPod') !== -1) { deviceName = 'iPod touch 6/7代'; chipName = 'A8/A10'; memoryText = '1GB'; }
+    else { deviceName = 'Apple 设备'; chipName = 'Apple 芯片'; memoryText = '未知'; }
+    if (pw === 1640 && ph === 2360 && deviceName !== 'iPad 11（A16）') { deviceName = 'iPad 11（A16）'; chipName = 'A16'; memoryText = '4~6GB'; }
+  }
+  else if (isAndroid) {
+    if (ua.indexOf('SM-') !== -1) { deviceName = 'Samsung Galaxy'; chipName = 'Snapdragon / Exynos'; }
+    else if (ua.indexOf('Pixel') !== -1) { deviceName = 'Google Pixel'; chipName = 'Tensor'; }
+    else if (ua.indexOf('MI') !== -1 || ua.indexOf('Xiaomi') !== -1) { deviceName = 'Xiaomi / Redmi'; chipName = 'Snapdragon / Dimensity'; }
+    else if (ua.indexOf('OPPO') !== -1) { deviceName = 'OPPO / OnePlus'; chipName = 'Snapdragon / Dimensity'; }
+    else if (ua.indexOf('vivo') !== -1) { deviceName = 'vivo / iQOO'; chipName = 'Snapdragon / Dimensity'; }
+    else if (ua.indexOf('Huawei') !== -1) { deviceName = 'Huawei'; chipName = 'Kirin / Snapdragon'; }
+    else if (ua.indexOf('Honor') !== -1) { deviceName = 'Honor'; chipName = 'Kirin / Snapdragon'; }
+    else if (ua.indexOf('Realme') !== -1) { deviceName = 'Realme'; chipName = 'Snapdragon / Dimensity'; }
+    else if (ua.indexOf('Nothing') !== -1) { deviceName = 'Nothing Phone'; chipName = 'Snapdragon'; }
+    else if (ua.indexOf('ASUS') !== -1) { deviceName = 'ASUS ROG / Zenfone'; chipName = 'Snapdragon'; }
+    else if (ua.indexOf('Sony') !== -1) { deviceName = 'Sony Xperia'; chipName = 'Snapdragon'; }
+    else if (ua.indexOf('Motorola') !== -1) { deviceName = 'Motorola'; chipName = 'Snapdragon'; }
+    else if (ua.indexOf('Nokia') !== -1) { deviceName = 'Nokia'; chipName = 'Snapdragon'; }
+    else { deviceName = '安卓设备'; chipName = cpuCores + '核 CPU'; }
+    memoryText = deviceMemory > 0 ? deviceMemory + 'GB' : '未知';
+  }
+
+  var loadingEl = document.getElementById('deviceInfoLoading');
+  if (loadingEl) loadingEl.textContent = deviceName;
+  var list = document.getElementById('deviceInfoList');
+  if (list) {
+    list.innerHTML = '';
+    var info = [
+      { label: '设备型号', value: deviceName }, { label: '芯片', value: chipName }, { label: '系统版本', value: osVersion },
+      { label: 'CPU 核心数', value: cpuCores + ' 核' }, { label: '运行内存 (RAM)', value: memoryText },
+      { label: '屏幕物理分辨率', value: pw + ' × ' + ph }, { label: '显示分辨率', value: screenWidth + ' × ' + screenHeight + ' @' + pixelRatio + 'x' },
+      { label: '色深', value: colorDepth + ' bit' }, { label: '屏幕方向', value: orientation }, { label: '最大触控点数', value: touchPoints },
+      { label: '越狱 / Root', value: jailbreakText }, { label: '是否为平板', value: isTablet ? '是' : '否' }, { label: 'User Agent', value: ua.substring(0, 100) + '…' }
+    ];
+    info.forEach(function(item) {
+      var div = document.createElement('div');
+      div.style.cssText = 'display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px dashed #9ab0b0;flex-wrap:wrap;gap:6px;';
+      div.innerHTML = '<span style="font-weight:700;color:#23555e;min-width:110px;">' + item.label + '</span><span style="color:#0e363e;font-weight:600;text-align:right;word-break:break-all;flex:1;">' + (item.value || '未知') + '</span>';
+      list.appendChild(div);
+    });
+  }
+}
+
+// ========== 页面加载 ==========
+if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', function() { showDeviceInfo(); loadBitcoinData(); }); }
+else { showDeviceInfo(); loadBitcoinData(); }
+
+// ========== 模组列表 ==========
+var modsList = [
+  "[3D 皮肤层] skinlayers3d-forge-1.9.2-mc1.20.1.jar", "[动态光源] dynamiclights-1.20.1.2.jar", "[极简血量显示] Neat-1.20.1-41-FORGE.jar",
+  "[聊天头像] chat_heads-0.14.2-forge-1.20.jar", "[模组目录] catalogue-forge-1.20.1-1.8.0.jar", "[暮色森林] twilightforest-1.20.1-4.3.2508-universal.jar",
+  "[内存泄漏修复] memoryleakfix-forge-1.17+-1.1.5.jar", "[苹果皮] appleskin-forge-mc1.20.1-2.5.1.jar", "[铷 · 扩展] rubidium-extra-0.5.4.4+mc1.20.1-build.131.jar",
+  "[铷] rubidium-mc1.20.1-0.7.1.jar", "[铷] rubidium-mc1.20.1-0.7.1a.jar", "[实体渲染机制优化] entityculling-forge-1.9.3-mc1.20.1.jar",
+  "[属性修复] AttributeFix-Forge-1.20.1-21.0.4.jar", "[铁氧体磁芯] ferritecore-6.0.1-forge.jar", "[投影] litematica-fabric-1.20.1-0.15.4.jar",
+  "[现代化修复] modernfix-forge-5.15.0+mc1.20.1.jar", "[一键背包整理Next] InventoryProfilesNext-forge-1.20-1.10.19.jar", "[JEI物品管理器] jei-1.20.1-forge-15.20.0.118.jar",
+  "[Xaero的世界地图] XaerosWorldMap_1.37.0_Forge_1.20.jar", "[Xaero的小地图] Xaeros_Minimap_25.2.10_Forge_1.20.jar", "embeddium-0.3.31+mc1.20.1.jar",
+  "fabric-api-0.92.6+1.11.14+1.20.1.jar", "libIPN-forge-1.20-4.0.2.jar", "malilib-fabric-1.20.1-0.16.3.jar", "prefab-1.10.0.1.jar", "voicechat-forge-1.21.8-2.5.35.jar"
+];
+
+function renderModsList() {
+  var container = document.getElementById('modsList');
+  if (!container) return;
+  var html = '';
+  for (var i = 0; i < modsList.length; i++) {
+    var mod = modsList[i];
+    var displayName = mod.replace('.jar', '');
+    html += '<div class="mod-card"><div class="mod-icon">📦</div><div class="mod-info"><div class="mod-name">' + displayName + '</div><div class="mod-version">Forge / Fabric</div></div><a href="jar-mod/' + encodeURIComponent(mod) + '" download class="mod-download-btn">⬇️ 下载</a></div>';
+  }
+  container.innerHTML = html;
+}
+
+// ========== 禁用 F12 ==========
+(function() {
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'F12') { e.preventDefault(); return false; }
+    if (e.ctrlKey && e.shiftKey && e.key === 'I') { e.preventDefault(); return false; }
+    if (e.ctrlKey && e.shiftKey && e.key === 'J') { e.preventDefault(); return false; }
+    if (e.ctrlKey && e.key === 'u') { e.preventDefault(); return false; }
+    if (e.ctrlKey && e.key === 's') { e.preventDefault(); return false; }
+    if (e.key === 'F5') { e.preventDefault(); return false; }
+    if (e.ctrlKey && e.key === 'r') { e.preventDefault(); return false; }
+  });
+  document.addEventListener('contextmenu', function(e) { e.preventDefault(); return false; });
+})();
+
+// ========== 翻译 ==========
+var texts = {
+  zh: { lang_title: "选择语言", lang_subtitle: "请选择你的语言", nav_home: "🏡 主界面", nav_members: "👥 群成员", nav_msg: "💬 留言板", nav_music: "🎵 群精选音乐", nav_games: "🎮 小游戏", nav_other: "🌐 其他服务器网站", nav_settings: "⚙️ 设置", badge_frost: "温泉庄园 · 永冬之地", site_title: "Java庄园农家乐<br>极寒之地玩家", qq_label: "🏷️ 庄园群号 · 敲门砖", scan_big: "📱 扫一扫 · 加入QQ群", scan_desc: "保存二维码 ➔ QQ扫码<br>「Java庄园农家乐·极寒之地玩家」", feat1_title: "庄园公告", feat1_desc: "雪季活动 · 冰钓大赛", feat2_title: "极寒智库", feat2_desc: "攻略 · 种子 · 模组", feat3_title: "快速导航", feat3_desc: "主城 · 地狱门 · 农场", info_title: "📊 庄园建设数据", stat1: "铁路全长", stat2: "地狱交通", stat3: "温室大棚", stat4: "村民交易所", stat5: "刷怪塔效率", stat6: "存储仓库", stat7: "冰道滑行", stat8: "凋灵骷髅农场", member_title: "🏕️ 营地成员", member_note: "⛄ 冰钓队长 / 温泉主 / 伐木工", news_title: "📰 庄园快讯", news_badge: "新", news1_title: "东线铁路完工", news1_desc: "新增800m，总长3200m，3个停靠站，自动发车。", news2_title: "冰下钓鱼场扩建", news2_desc: "新增12个钓位，出冰霜行者附魔。冬钓获命名牌x3。", news3_title: "雪山遗迹", news3_desc: "大型雪山要塞，冰霜骷髅刷怪笼，3人组队。", news4_title: "温室丰收", news4_desc: "马铃薯27组、胡萝卜19组、甜菜32组，面包充足。", news5_title: "温泉升级", news5_desc: "更衣室+篝火区，生命恢复II，21:00夜话。", server1: "村庄农家乐（Java/基岩版服务器）", server2: "空岛服务器（Java版服务器）", members_title: "👥 QQ群主 / 管理员", msg_title: "💬 留言板", music_title: "🎵 群精选音乐", games_title: "🎮 小游戏", settings_title: "⚙️ 设置" },
+  en: { lang_title: "Select Language", lang_subtitle: "Choose your language", nav_home: "🏡 Home", nav_members: "👥 Members", nav_msg: "💬 Messages", nav_music: "🎵 Music", nav_games: "🎮 Games", nav_other: "🌐 Other Servers", nav_settings: "⚙️ Settings", badge_frost: "Hot Spring Manor · Eternal Winter", site_title: "Java Manor Farmhouse<br>Extreme Cold Land Players", qq_label: "🏷️ Manor Group · Knock Knock", scan_big: "📱 Scan · Join QQ Group", scan_desc: "Save QR ➔ QQ Scan<br>「Java Manor Farmhouse·Extreme Cold」", feat1_title: "Manor Notice", feat1_desc: "Snow Season · Ice Fishing", feat2_title: "Cold智库", feat2_desc: "Guides · Seeds · Mods", feat3_title: "Quick Nav", feat3_desc: "Spawn · Nether · Farm", info_title: "📊 Manor Build Data", stat1: "Railway Length", stat2: "Nether Transport", stat3: "Greenhouse", stat4: "Villager Trading", stat5: "Mob Farm Rate", stat6: "Storage", stat7: "Ice Boat Path", stat8: "Wither Skeleton Farm", member_title: "🏕️ Camp Members", member_note: "⛄ Ice Fishing / Hot Spring / Lumberjack", news_title: "📰 Manor News", news_badge: "New", news1_title: "East Railway Done", news1_desc: "Added 800m, total 3200m, 3 stops, auto departure.", news2_title: "Ice Fishing Expanded", news2_desc: "12 more spots, Frost Walker enchant. Winter caught 3 name tags.", news3_title: "Snow Mountain Ruins", news3_desc: "Large snow fortress, ice skeleton spawner, 3-player team.", news4_title: "Greenhouse Harvest", news4_desc: "27 potatoes, 19 carrots, 32 beetroot. Bread supply full.", news5_title: "Hot Spring Upgrade", news5_desc: "Locker room + campfire area, Regen II, 21:00 chat.", server1: "Village Farmhouse (Java/Bedrock)", server2: "Skyblock Server (Java)", members_title: "👥 QQ Group Owner / Admins", msg_title: "💬 Message Board", music_title: "🎵 Featured Music", games_title: "🎮 Mini Games", settings_title: "⚙️ Settings" }
+};
+var currentLang = 'zh';
+function setLang(lang) { currentLang = lang; document.getElementById('langOverlay').classList.add('hidden'); var t = texts[lang] || texts['zh']; document.querySelectorAll('[data-key]').forEach(function(el) { var key = el.getAttribute('data-key'); if (t[key]) el.innerHTML = t[key]; }); }
+window.addEventListener('DOMContentLoaded', function() { document.getElementById('langOverlay').classList.remove('hidden'); });
+
+// ========== 音乐播放器 ==========
+var songs = [
+  { src: 'music/Lovely.mp3', title: 'Lovely', artist: 'Billie Eilish & Khalid' }, { src: 'music/DreamItPossible.mp3', title: 'Dream It Possible', artist: 'Delacey' },
+  { src: 'music/ChipiChipiChapaChapa.mp3', title: 'ChipiChipiChapaChapa', artist: 'lusttqwe/lorche/Bexter/Kairas' }, { src: 'music/Wasted.mp3', title: 'Wasted', artist: 'huken/Murkish' },
+  { src: 'music/OnceUponATime.mp3', title: 'Once Upon A Time', artist: 'Max Oazo & Moonessa' }, { src: 'music/蛋生蛋.mp3', title: '蛋生蛋', artist: 'EMOWZ' },
+  { src: 'music/3Strikes.mp3', title: '3 Strikes', artist: 'Terror Jr' }, { src: 'music/PASSOBEMSOLTO.mp3', title: 'PASSO BEM SOLTO', artist: 'Atlxs' },
+  { src: 'music/MontagemNadaTropica.mp3', title: 'Montagem Nada Tropica', artist: 'Eternxlkz' }, { src: 'music/alliwantisyou.mp3', title: 'All I Want Is You', artist: 'Rebzyyx/hoshie star' },
+  { src: 'music/起舞.mp3', title: '起舞', artist: '扎西平措' }, { src: 'music/Simpa.mp3', title: 'Simpa', artist: 'RaiM/Artur/Adil' },
+  { src: 'music/BadApple.mp3', title: 'Bad Apple', artist: '初音未来' }, { src: 'music/Y.M.C.A..mp3', title: 'Y.M.C.A.', artist: 'Village People' },
+  { src: 'music/不问ciaga.mp3', title: '不问ciaga', artist: '指尖笑' }, { src: 'music/MontagemMiau.mp3', title: 'Montagem Miau', artist: 'Lenar/Leonardo P' },
+  { src: 'music/一路生花.mp3', title: '一路生花', artist: '温奕心' }, { src: 'music/HEAVENLYJUMPSTYLE.mp3', title: 'HEAVENLY JUMPSTYLE', artist: 'TWXNY/Sxilwix/INNXCENCE' },
+  { src: 'music/IWANNABEYOURSLAVE.mp3', title: 'I WANNA BE YOUR SLAVE', artist: 'Måneskin' }, { src: 'music/APT..mp3', title: 'APT.', artist: 'ROSÉ & Bruno Mars' },
+  { src: 'music/Higher.mp3', title: 'Higher', artist: 'Tobu' }, { src: 'music/一笑江湖.mp3', title: '一笑江湖', artist: '闻人听書' },
+  { src: 'music/Hedley.mp3', title: 'Hedley', artist: 'Lose Control' }, { src: 'music/苹果香.mp3', title: '苹果香', artist: '狼戈' },
+  { src: 'music/AlohaHejaHe.mp3', title: 'Aloha Heja He', artist: 'Achim Reichel' }, { src: 'music/辞九门回忆.mp3', title: '辞九门回忆', artist: '邓寓君(等什么君)' },
+  { src: 'music/NOBATIDAO.mp3', title: 'NO BATIDÃO', artist: 'ZXKAI & slxughter' }, { src: 'music/MENTEMA.mp3', title: 'MENTE MÁ', artist: 'Nakama/MC Staff' }
+];
+function renderSongs() { var list = document.getElementById('songList'); var html = ''; songs.forEach(function(s, i) { html += '<div class="song-card" id="song' + i + '" onclick="playSong(\'' + s.src + '\',\'' + s.title + '\',\'' + s.artist + '\',\'song' + i + '\')"><div class="song-icon">🎵</div><div class="song-info"><div class="song-title">' + s.title + '</div><div class="song-artist">' + s.artist + '</div></div></div>'; }); list.innerHTML = html; }
+renderSongs();
+
+function switchPage(page) {
+  document.querySelectorAll('.page, .page-wide').forEach(function(el) { el.classList.remove('show'); });
+  document.querySelectorAll('.nav-btn').forEach(function(el) { el.classList.remove('active'); });
+  if (page === 'home') { document.getElementById('pageHome').classList.add('show'); document.getElementById('navHome').classList.add('active'); }
+  else if (page === 'members') { document.getElementById('pageMembers').classList.add('show'); document.getElementById('navMembers').classList.add('active'); }
+  else if (page === 'msg') { document.getElementById('pageMsg').classList.add('show'); document.getElementById('navMsg').classList.add('active'); }
+  else if (page === 'music') { document.getElementById('pageMusic').classList.add('show'); document.getElementById('navMusic').classList.add('active'); }
+  else if (page === 'games') { document.getElementById('pageGames').classList.add('show'); document.getElementById('navGames').classList.add('active'); stopGame(); }
+  else if (page === 'other') { document.getElementById('pageOther').classList.add('show'); document.getElementById('navOther').classList.add('active'); }
+  else if (page === 'settings') { document.getElementById('pageSettings').classList.add('show'); document.getElementById('navSettings').classList.add('active'); }
+  else if (page === 'mods') { document.getElementById('pageMods').classList.add('show'); document.getElementById('navMods').classList.add('active'); renderModsList(); }
+  else if (page === 'btc') { document.getElementById('pageBtc').classList.add('show'); document.getElementById('navBtc').classList.add('active'); loadBitcoinData(); }
+}
+
+var music = document.getElementById('bgMusic');
+var playBtn = document.getElementById('playBtn');
+var currentTitleEl = document.getElementById('currentTitle');
+var currentArtistEl = document.getElementById('currentArtist');
+var progressBar = document.getElementById('progressBar');
+var currentTimeEl = document.getElementById('currentTime');
+var totalTimeEl = document.getElementById('totalTime');
+var playing = false;
+var currentSpeed = 1;
+music.volume = 0.3;
+
+function formatTime(sec) { var m = Math.floor(sec / 60); var s = Math.floor(sec % 60); return m + ':' + (s < 10 ? '0' : '') + s; }
+music.addEventListener('loadedmetadata', function() { totalTimeEl.textContent = formatTime(music.duration); progressBar.max = music.duration || 100; });
+music.addEventListener('timeupdate', function() { currentTimeEl.textContent = formatTime(music.currentTime); progressBar.value = music.currentTime; });
+function togglePlay() { if (playing) { music.pause(); playBtn.textContent = '▶️'; } else { music.play().catch(function(){}); playBtn.textContent = '⏸️'; } playing = !playing; }
+function setSpeed(s) { s = parseFloat(s); if (s < 1) s = 1; if (s > 100) s = 100; currentSpeed = s; music.playbackRate = s; document.getElementById('speedInput').value = s; document.querySelectorAll('.speed-btn').forEach(function(b) { b.classList.remove('active-speed'); }); var presetSpeeds = [1, 1.5, 2, 3, 4, 5, 6, 7, 8, 9, 10]; var index = presetSpeeds.indexOf(s); if (index >= 0) { document.querySelectorAll('.speed-btn')[index].classList.add('active-speed'); } }
+function playSong(src, title, artist, cardId) { document.querySelectorAll('.song-card').forEach(function(el){el.classList.remove('playing');}); var card = document.getElementById(cardId); if(card)card.classList.add('playing'); currentTitleEl.textContent=title; currentArtistEl.textContent=artist; music.src=src; music.load(); music.play().catch(function(){}); playing=true; playBtn.textContent='⏸️'; music.playbackRate=currentSpeed; }
+music.addEventListener('ended',function(){playing=false;playBtn.textContent='▶️';document.querySelectorAll('.song-card').forEach(function(el){el.classList.remove('playing');});});
+
+(function(){
+  var p = ["❄️ -5°C 晴","☕ 暖炉已燃","🎣 冰钓报名 5/12","🌲 木材 42组","⛷️ 雪地指南已更新","🧊 遗迹组队中","🔥 温泉回血+20%","🦊 雪狐出没","🚂 观光车发车","📦 分类机v2上线"];
+  var el = document.getElementById('dynText'); if (el) { var i = Math.floor(Math.random() * p.length); el.textContent = p[i]; var idx = i; setInterval(function() { idx = (idx + 1) % p.length; el.textContent = p[idx]; }, 3600); }
+  function bindCopy(id, txt) { var btn = document.getElementById(id); if (btn) { btn.addEventListener('click', function() { navigator.clipboard.writeText(txt).then(function() { btn.textContent = '✅ 已复制'; setTimeout(function() { btn.textContent = '📋 复制'; }, 2000); }); }); } }
+  bindCopy('copyAddr1', 'QM202604042011.aternos.me'); bindCopy('copyPort1', '12437'); bindCopy('copyAddr2', 'fm.rainplay.cn'); bindCopy('copyPort2', '17901'); bindCopy('copyAddr3', '2b2t.org'); bindCopy('copyPort3', '25565'); bindCopy('copyAddr4', '3c3u.org'); bindCopy('copyPort4', '25565');
+})();
+
+function loadMessages() { var list = document.getElementById('msgList'); fetch('data/messages-1').then(function(r) { if (!r.ok) throw new Error('no'); return r.text(); }).then(function(txt) { var lines = txt.split('\n').filter(function(l) { return l.trim() !== ''; }); if (lines.length === 0) { list.innerHTML = '<div class="msg-empty">📝 还没有留言</div>'; return; } var html = ''; lines.reverse().forEach(function(line) { var p = line.split('|'); var a = p[0] || '匿名'; var t = p[1] || ''; var c = p[2] || ''; html += '<div class="msg-card"><div class="msg-meta"><div class="msg-author">' + a + '</div><div class="msg-time">' + t + '</div></div><div class="msg-body">' + c + '</div></div>'; }); list.innerHTML = html; }).catch(function() { list.innerHTML = '<div class="msg-empty">📝 还没有留言<br>data/messages-1</div>'; }); }
+loadMessages();
+
+var gameInterval = null; var gameActive = false;
+function startGame(name) { stopGame(); document.getElementById('gameList').style.display = 'none'; var area = document.getElementById('gamePlayArea'); area.style.display = 'block'; if (name === 'snake') startSnake(); else { alert('其他游戏开发中'); stopGame(); } }
+function stopGame() { if (gameInterval) clearInterval(gameInterval); gameInterval = null; gameActive = false; document.getElementById('gamePlayArea').style.display = 'none'; document.getElementById('gameCanvasWrap').innerHTML = ''; document.getElementById('gameScore').textContent = ''; document.getElementById('gameList').style.display = ''; }
+function createCanvas(w, h) { var wrap = document.getElementById('gameCanvasWrap'); wrap.innerHTML = '<canvas width="' + w + '" height="' + h + '" style="background:#0d2a35;"></canvas>'; return wrap.querySelector('canvas'); }
+function startSnake() {
+  var size = 20, cols = 20, rows = 20;
+  var c = createCanvas(cols * size, rows * size);
+  var ctx = c.getContext('2d');
+  var snake = [{ x: 10, y: 10 }], dir = { x: 1, y: 0 }, food = {};
+  var score = 0, speed = 120;
+  function placeFood() { food = { x: Math.floor(Math.random() * cols), y: Math.floor(Math.random() * rows) }; }
+  placeFood();
+  document.getElementById('gameScore').textContent = 'Score: 0';
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowUp' && dir.y === 0) { dir = { x: 0, y: -1 }; e.preventDefault(); }
+    else if (e.key === 'ArrowDown' && dir.y === 0) { dir = { x: 0, y: 1 }; e.preventDefault(); }
+    else if (e.key === 'ArrowLeft' && dir.x === 0) { dir = { x: -1, y: 0 }; e.preventDefault(); }
+    else if (e.key === 'ArrowRight' && dir.x === 0) { dir = { x: 1, y: 0 }; e.preventDefault(); }
+  });
+  c.addEventListener('touchstart', function(e) {
+    var tx = e.touches[0].clientX - c.getBoundingClientRect().left;
+    var ty = e.touches[0].clientY - c.getBoundingClientRect().top;
+    var cx = snake[0].x * size + size / 2, cy = snake[0].y * size + size / 2;
+    if (Math.abs(tx - cx) > Math.abs(ty - cy)) { if (tx > cx && dir.x === 0) dir = { x: 1, y: 0 }; else if (dir.x === 0) dir = { x: -1, y: 0 }; }
+    else { if (ty > cy && dir.y === 0) dir = { x: 0, y: 1 }; else if (dir.y === 0) dir = { x: 0, y: -1 }; }
+    e.preventDefault();
+  });
+  gameInterval = setInterval(function() {
+    var head = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
+    if (head.x < 0 || head.x >= cols || head.y < 0 || head.y >= rows) { clearInterval(gameInterval); document.getElementById('gameScore').textContent = 'Game Over! Score: ' + score; return; }
+    snake.unshift(head);
+    if (head.x === food.x && head.y === food.y) { score++; placeFood(); document.getElementById('gameScore').textContent = 'Score: ' + score; }
+    else { snake.pop(); }
+    ctx.clearRect(0, 0, c.width, c.height);
+    ctx.fillStyle = '#5fbb68'; snake.forEach(function(p) { ctx.fillRect(p.x * size, p.y * size, size - 2, size - 2); });
+    ctx.fillStyle = '#d94f4f'; ctx.fillRect(food.x * size, food.y * size, size - 2, size - 2);
+  }, speed);
+}
+</script>
+</body>
+</html>
