@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>Java庄园农家乐 · 极寒之地玩家 · v1.26.29.5</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(145deg, #07161e 0%, #12303e 50%, #1a3f50 100%);
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans SC', sans-serif;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .auth-wrapper {
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .auth-container {
+      background: rgba(252, 247, 238, 0.96);
+      backdrop-filter: blur(14px);
+      border-radius: 56px;
+      padding: 48px 40px;
+      box-shadow: 0 30px 45px -12px rgba(0, 0, 0, 0.7), 0 0 0 2px #7eafc5 inset;
+    }
+
+    .auth-title {
+      font-size: 32px;
+      font-weight: 800;
+      color: #1a3a28;
+      text-align: center;
+      margin-bottom: 36px;
+      text-shadow: 2px 2px 0 #ede1c2;
+    }
+
+    .auth-title small {
+      font-size: 13px;
+      font-weight: 500;
+      color: #5a7a7e;
+      display: block;
+      margin-top: 8px;
+    }
+
+    .auth-input-group {
+      margin-bottom: 20px;
+    }
+
+    .auth-input-group label {
+      display: block;
+      font-weight: 700;
+      color: #23555e;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .auth-input {
+      width: 100%;
+      padding: 14px 18px;
+      border: 2px solid #c4d5d8;
+      border-radius: 40px;
+      font-size: 16px;
+      background: white;
+      transition: all 0.2s;
+    }
+
+    .auth-input:focus {
+      outline: none;
+      border-color: #2e5f6e;
+      box-shadow: 0 0 0 3px rgba(46, 95, 110, 0.2);
+    }
+
+    .auth-btn {
+      width: 100%;
+      background: #2e5f6e;
+      border: none;
+      color: white;
+      padding: 14px 20px;
+      border-radius: 40px;
+      font-weight: 800;
+      font-size: 18px;
+      cursor: pointer;
+      margin-top: 16px;
+      transition: all 0.2s;
+      box-shadow: 0 4px 0 #1a3f4e;
+    }
+
+    .auth-btn:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #1a3f4e;
+    }
+
+    .auth-switch {
+      text-align: center;
+      margin-top: 24px;
+      color: #5a7a7e;
+      font-size: 14px;
+    }
+
+    .auth-switch a {
+      color: #2e5f6e;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .error-msg {
+      color: #d94f4f;
+      font-size: 13px;
+      margin-top: 12px;
+      text-align: center;
+    }
+
+    .success-msg {
+      color: #5fbb68;
+      font-size: 13px;
+      margin-top: 12px;
+      text-align: center;
+    }
+
+    .main-content {
+      display: none;
+      width: 100%;
+      max-width: 1100px;
+    }
+
+    .main-content.show {
+      display: block;
+    }
+
+    .navbar {
+      background: rgba(252, 247, 238, 0.95);
+      backdrop-filter: blur(12px);
+      border-radius: 60px;
+      padding: 16px 28px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
+      border: 1px solid #cfe2e8;
+      margin-bottom: 24px;
+    }
+
+    .nav-btn {
+      background: #d9e7ea;
+      border: none;
+      padding: 10px 22px;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 14px;
+      color: #1a3a44;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid #bcd0d4;
+      box-shadow: 0 3px 0 #8aa3a8;
+    }
+
+    .nav-btn:hover {
+      background: #c8dce0;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 0 #7d989e;
+    }
+
+    .nav-btn.active {
+      background: #2e5f6e;
+      color: #fef3e2;
+      border-color: #9fcddf;
+      box-shadow: 0 3px 0 #1a3f4e;
+    }
+
+    .logout-btn {
+      background: #d94f4f;
+      color: white;
+      box-shadow: 0 3px 0 #a33a3a;
+    }
+
+    .logout-btn:hover {
+      background: #c43e3e;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.show {
+      display: block;
+    }
+
+    .master-card {
+      background: rgba(252, 247, 238, 0.97);
+      backdrop-filter: blur(14px);
+      border-radius: 56px;
+      box-shadow: 0 30px 45px -12px rgba(0, 0, 0, 0.7), 0 0 0 2px #7eafc5 inset;
+      overflow: hidden;
+      margin-bottom: 28px;
+    }
+
+    .card-inner {
+      padding: 34px 36px 42px;
+    }
+
+    .balance-card {
+      background: linear-gradient(135deg, #236653, #0e4a3c);
+      border-radius: 48px;
+      padding: 28px 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: white;
+      margin-bottom: 28px;
+      box-shadow: 0 10px 0 #0b3129;
+    }
+
+    .balance-label {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 2px;
+    }
+
+    .balance-value {
+      font-size: 52px;
+      font-weight: 900;
+      text-shadow: 2px 2px 0 #4f3a1a;
+    }
+
+    .action-group {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      background: #2e5f6e;
+      border: none;
+      color: white;
+      padding: 12px 28px;
+      border-radius: 50px;
+      font-weight: 800;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 0 #1a404e;
+      transition: 0.05s linear;
+    }
+
+    .action-btn:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #1a404e;
+    }
+
+    .shop-tabs {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 32px;
+      background: #e6ddce;
+      border-radius: 80px;
+      padding: 8px;
+      width: fit-content;
+    }
+
+    .shop-tab {
+      background: #cfc2a8;
+      border: none;
+      padding: 12px 32px;
+      border-radius: 60px;
+      font-weight: 800;
+      font-size: 16px;
+      color: #2c423c;
+      cursor: pointer;
+      transition: 0.15s;
+      box-shadow: 0 3px 0 #8b7d62;
+    }
+
+    .shop-tab.active {
+      background: #2e5f6e;
+      color: #fef3da;
+      box-shadow: 0 3px 0 #163c46;
+    }
+
+    .shop-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+      margin: 30px 0;
+    }
+
+    .item-card {
+      background: #fffef8;
+      border-radius: 36px;
+      padding: 22px 18px;
+      text-align: center;
+      box-shadow: 0 10px 0 #9fbbbf;
+      border: 1px solid #ecdbaa;
+      transition: all 0.2s;
+    }
+
+    .item-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 14px 0 #86a5aa;
+    }
+
+    .item-emoji {
+      font-size: 56px;
+      margin-bottom: 12px;
+    }
+
+    .item-name {
+      font-weight: 800;
+      font-size: 20px;
+      color: #1b4b3c;
+      margin-bottom: 6px;
+    }
+
+    .item-amount {
+      font-size: 14px;
+      color: #5b7f75;
+      background: #eef3e8;
+      display: inline-block;
+      padding: 4px 16px;
+      border-radius: 30px;
+      margin-bottom: 12px;
+    }
+
+    .item-price {
+      background: #2e5f6e20;
+      display: inline-block;
+      padding: 6px 20px;
+      border-radius: 40px;
+      font-weight: 800;
+      color: #1e5e55;
+      margin: 12px 0;
+      font-size: 18px;
+    }
+
+    .item-desc {
+      font-size: 12px;
+      color: #6b8a6e;
+      margin: 8px 0;
+      padding: 8px;
+      background: #f7f2e2;
+      border-radius: 24px;
+    }
+
+    .exchange-btn {
+      background: #f7931a;
+      border: none;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 40px;
+      font-weight: 800;
+      font-size: 15px;
+      cursor: pointer;
+      width: 100%;
+      box-shadow: 0 4px 0 #b45f0a;
+      transition: 0.05s linear;
+    }
+
+    .exchange-btn:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #b45f0a;
+    }
+
+    .bill-area {
+      background: #f1ebda;
+      border-radius: 40px;
+      padding: 24px;
+      margin-top: 36px;
+      border: 2px dashed #c7b27e;
+    }
+
+    .bill-area h3 {
+      font-size: 22px;
+      text-align: center;
+      margin-bottom: 20px;
+      color: #2c554b;
+    }
+
+    .receipt-paper {
+      background: #fffef7;
+      border-radius: 28px;
+      padding: 24px;
+      font-family: monospace;
+    }
+
+    .empty-bill {
+      text-align: center;
+      padding: 40px;
+      color: #9b8a64;
+    }
+
+    .info-box {
+      background: #d9cfbbe0;
+      border-radius: 40px;
+      padding: 24px;
+      margin-top: 20px;
+    }
+
+    .qq-big {
+      font-size: 52px;
+      font-weight: 900;
+      color: #113946;
+      letter-spacing: 6px;
+      margin: 16px 0;
+    }
+
+    .tag-java {
+      background: #236653;
+      color: #fbf3e0;
+      padding: 6px 20px;
+      border-radius: 40px;
+      font-weight: 700;
+      display: inline-block;
+      margin-right: 12px;
+    }
+
+    .music-bar {
+      background: rgba(252, 247, 238, 0.95);
+      backdrop-filter: blur(12px);
+      border-radius: 60px;
+      padding: 16px 28px;
+      margin-top: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .music-btn {
+      background: #2e5f6e;
+      border: none;
+      color: white;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .music-info {
+      flex: 1;
+    }
+
+    .music-title {
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    .music-artist {
+      font-size: 12px;
+      color: #5a7a7e;
+    }
+
+    .progress-bar {
+      flex: 1;
+      height: 4px;
+      -webkit-appearance: none;
+      background: #c4d5d8;
+      border-radius: 2px;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .gallery-item {
+      aspect-ratio: 1;
+      background: #1a3f4e;
+      border-radius: 20px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .server-row {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .server-box {
+      background: #2e5f6e;
+      border-radius: 28px;
+      padding: 20px;
+      color: white;
+    }
+
+    .copy-btn {
+      background: #5a8b9a;
+      border: none;
+      color: white;
+      padding: 6px 16px;
+      border-radius: 30px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .member-card {
+      background: #f5f0e0;
+      border-radius: 28px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+
+    .member-card.owner {
+      background: #fef5d6;
+    }
+
+    .mod-card {
+      background: #f5f0e0;
+      border-radius: 24px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .mod-download-btn {
+      background: #5a8b9a;
+      color: white;
+      padding: 6px 16px;
+      border-radius: 30px;
+      text-decoration: none;
+      font-size: 13px;
+    }
+
+    .song-card {
+      background: #f5f0e0;
+      border-radius: 24px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+
+    .song-card.playing {
+      background: #d4e8e0;
+    }
+
+    .msg-list {
+      max-height: 500px;
+      overflow-y: auto;
+    }
+
+    .foot {
+      max-width: 1100px;
+      width: 100%;
+      padding: 18px 32px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #a89f86;
+      border-radius: 50px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .dynamic-msg {
+      background: #0f3543;
+      color: #deeffa;
+      padding: 8px 22px;
+      border-radius: 60px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    @media (max-width: 700px) {
+      .auth-container { padding: 32px 24px; }
+      .balance-value { font-size: 36px; }
+      .shop-grid { grid-template-columns: 1fr 1fr; gap: 16px; }
+      .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+      .card-inner { padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============================================ -->
+<!-- 登录/注册界面                                 -->
+<!-- ============================================ -->
+<div class="auth-wrapper" id="authWrapper">
+  <div class="auth-container">
+    <div class="auth-title">
+      🏔️ Java庄园农家乐<br>
+      <small>极寒之地玩家 · v1.26.29.5</small>
+    </div>
+
+    <!-- 登录表单 -->
+    <div id="loginForm">
+      <div class="auth-input-group">
+        <label>👤 用户名</label>
+        <input type="text" id="loginUsername" class="auth-input" placeholder="请输入用户名">
+      </div>
+      <div class="auth-input-group">
+        <label>📧 邮箱</label>
+        <input type="email" id="loginEmail" class="auth-input" placeholder="your@email.com">
+      </div>
+      <div class="auth-input-group">
+        <label>🔒 密码</label>
+        <input type="password" id="loginPassword" class="auth-input" placeholder="请输入密码">
+      </div>
+      <button class="auth-btn" id="loginBtn">登 录</button>
+      <div class="auth-switch">
+        还没有账号？ <a id="showRegisterBtn">立即注册</a>
+      </div>
+      <div id="loginError" class="error-msg"></div>
+    </div>
+
+    <!-- 注册表单 -->
+    <div id="registerForm" style="display: none;">
+      <div class="auth-input-group">
+        <label>👤 用户名</label>
+        <input type="text" id="regUsername" class="auth-input" placeholder="请输入用户名（2-20个字符）">
+      </div>
+      <div class="auth-input-group">
+        <label>📧 邮箱</label>
+        <input type="email" id="regEmail" class="auth-input" placeholder="your@email.com">
+      </div>
+      <div class="auth-input-group">
+        <label>🔒 密码</label>
+        <input type="password" id="regPassword" class="auth-input" placeholder="请输入密码（至少6位）">
+      </div>
+      <div class="auth-input-group">
+        <label>🔒 确认密码</label>
+        <input type="password" id="regConfirm" class="auth-input" placeholder="请再次输入密码">
+      </div>
+      <button class="auth-btn" id="registerBtn">注 册</button>
+      <div class="auth-switch">
+        已有账号？ <a id="showLoginBtn">返回登录</a>
+      </div>
+      <div id="registerError" class="error-msg"></div>
+      <div id="registerSuccess" class="success-msg"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- 主内容（登录后显示）                          -->
+<!-- ============================================ -->
+<div class="main-content" id="mainContent">
+  <nav class="navbar">
+    <button class="nav-btn active" onclick="showPage('home')">🏡 庄园首页</button>
+    <button class="nav-btn" onclick="showPage('members')">👥 群成员</button>
+    <button class="nav-btn" onclick="showPage('msg')">💬 留言板</button>
+    <button class="nav-btn" onclick="showPage('music')">🎵 群精选音乐</button>
+    <button class="nav-btn" onclick="showPage('mods')">📦 群模组下载</button>
+    <button class="nav-btn" onclick="showPage('other')">🌐 其他服务器</button>
+    <button class="nav-btn" onclick="showPage('gallery')">📸 庄园画廊</button>
+    <button class="nav-btn" onclick="showPage('shop')">💰 资源币商店</button>
+    <button class="nav-btn" onclick="showPage('settings')">⚙️ 设置</button>
+    <button class="nav-btn logout-btn" id="logoutBtn">🚪 退出登录</button>
+  </nav>
+
+  <!-- ========== 首页 ========== -->
+  <div id="pageHome" class="page show">
+    <div class="master-card">
+      <div class="card-inner">
+        <div class="balance-card">
+          <span class="balance-label">💰 我的资源币</span>
+          <span class="balance-value" id="balanceDisplay">0</span>
+        </div>
+
+        <div class="action-group">
+          <button class="action-btn" id="signBtn">📅 每日签到 +10 资源币</button>
+          <button class="action-btn" id="shareBtn">📢 分享网站 +5 资源币</button>
+        </div>
+
+        <div class="info-box">
+          <h3 style="margin-bottom: 16px;">📰 庄园公告</h3>
+          <p>❄️ 冰钓大赛周六开启 · 温泉夜话每晚九点</p>
+          <p>🐟 首次签到赠送10资源币，连续签到奖励递增</p>
+          <p>🏆 资源币跨设备同步，登录账号即可存取</p>
+          <p>📌 当前版本：v1.26.29.5 · 极寒豪华版</p>
+          <div style="margin-top: 20px;">
+            <span class="tag-java">☕ Java版原汁原味</span>
+            <span class="tag-java" style="background:#1c4b62;">❄️ 极寒生存挑战</span>
+            <span class="tag-java" style="background:#4a6e5e;">🔥 温泉已开放</span>
+            <span class="tag-java" style="background:#8b6b4a;">🎣 冰钓大赛报名中</span>
+          </div>
+          <div class="qq-big">1091304030</div>
+          <p style="margin-top: 16px; font-size: 14px; color: #5a6e5e;">📢 官方一群：1090578436 &nbsp;|&nbsp; 二群：1091304030</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 群成员页面 ========== -->
+  <div id="pageMembers" class="page">
+    <div class="master-card">
+      <div class="card-inner">
+        <h2 style="font-size: 28px; margin-bottom: 24px;">👥 庄园管理层 / 群管理团队</h2>
+        <div class="member-card owner"><div style="font-size: 32px;">👑</div><div><strong>在周末睡觉（jay zhou）</strong><br><small>庄主 · 极寒开拓者 · 服务器创始人</small></div></div>
+        <div class="member-card"><div style="font-size: 32px;">🍎</div><div><strong>CEO System Qingmeng Apple</strong><br><small>技术顾问 · 插件开发 · 服务器维护</small></div></div>
+        <div class="member-card"><div style="font-size: 32px;">🌿</div><div><strong>逢一场春</strong><br><small>活动策划 · 冰钓主理人 · 建筑指导</small></div></div>
+        <div class="member-card"><div style="font-size: 32px;">💾</div><div><strong>HacknetOS_Backups_Server</strong><br><small>服务器守护者 · 数据备份 · 安全维护</small></div></div>
+        <div class="member-card"><div style="font-size: 32px;">🕊️</div><div><strong>久违.</strong><br><small>建筑总设计师 · 主城规划 · 内饰专家</small></div></div>
+        <div class="member-card"><div style="font-size: 32px;">🐺</div><div><strong>Wemmbu</strong><br><small>红石机械工程师 · 自动化农场 · 刷怪塔设计</small></div></div>
+        <div class="member-card"><div style="font-size: 32px;">🌟</div><div><strong>星河hhx</strong><br><small>温泉小镇管理员 · 社区运营 · 新手引导</small></div></div>
+        <div class="member-card"><div style="font-size: 32px;">❄️</div><div><strong>极寒冰熊</strong><br><small>探险队长 · 遗迹探索 · 物资收集</small></div></div>
+        <div class="member-card"><div style="font-size: 32px;">🔥</div><div><strong>篝火守护者</strong><br><small>温泉管理员 · 夜话主持人 · 活动组织</small></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 留言板页面 ========== -->
+  <div id="pageMsg" class="page">
+    <div class="master-card">
+      <div class="card-inner">
+        <h2 style="font-size: 28px; margin-bottom: 20px;">💬 极寒留言板</h2>
+        <div id="msgList" class="msg-list">
+          <div class="msg-card">🔥 冰下钓鱼大赛周六开启，前三名奖励稀有资源币！</div>
+          <div class="msg-card">⛷️ 雪山探险队招募，探索冰霜骷髅要塞，组队私聊群主。</div>
+          <div class="msg-card">🎣 温泉夜话每晚九点，篝火故事会等你来分享。</div>
+          <div class="msg-card">❄️ 新版本1.26.29.5已更新，修复若干问题，请及时同步。</div>
+          <div class="msg-card">🏔️ 极寒之地新增雪狐驯养系统，可在雪山捕捉。</div>
+          <div class="msg-card">📦 模组包已更新至26个，新增暮色森林和投影模组。</div>
+          <div class="msg-card">🚂 东线铁路已通车，总长3200米，途径3个停靠站。</div>
+          <div class="msg-card">🌾 温室大丰收！马铃薯27组、胡萝卜19组，面包充足。</div>
+          <div class="msg-card">💎 凋灵骷髅农场效率提升至12000/h，欢迎体验。</div>
+          <div class="msg-card">🎨 庄园画廊新增37张精彩截图，记录庄园发展历程。</div>
+          <div class="msg-card">📢 资源币已接入云端，换设备登录同一账号即可同步！</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- ========== 音乐页面 ========== -->
+  <div id="pageMusic" class="page">
+    <div class="master-card">
+      <div class="card-inner">
+        <h2 style="font-size: 28px; margin-bottom: 20px;">🎵 庄园精选歌单（共22首）</h2>
+        <div id="songList" class="msg-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 模组页面 ========== -->
+  <div id="pageMods" class="page">
+    <div class="master-card">
+      <div class="card-inner">
+        <h2 style="font-size: 28px; margin-bottom: 20px;">📦 模组整合包（共26个）</h2>
+        <div id="modsList" class="msg-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 其他服务器页面 ========== -->
+  <div id="pageOther" class="page">
+    <div class="master-card">
+      <div class="card-inner">
+        <h2 style="font-size: 28px; margin-bottom: 24px;">🌐 友情服务器</h2>
+        <div class="server-row">
+          <div class="server-box"><strong>🏡 村庄农家乐（Java/基岩版）</strong><br>地址：QM202604042011.aternos.me<br>端口：12437<br><button class="copy-btn" onclick="copyToClipboard('QM202604042011.aternos.me:12437')">📋 复制地址</button></div>
+          <div class="server-box"><strong>✨ 空岛生存（Java版）</strong><br>地址：fm.rainplay.cn<br>端口：17901<br><button class="copy-btn" onclick="copyToClipboard('fm.rainplay.cn:17901')">📋 复制地址</button></div>
+          <div class="server-box"><strong>⚔️ 2b2t.org（Java版）</strong><br>地址：2b2t.org<br>端口：25565<br><button class="copy-btn" onclick="copyToClipboard('2b2t.org:25565')">📋 复制地址</button></div>
+          <div class="server-box"><strong>🏴 3c3u.org（Java版）</strong><br>地址：3c3u.org<br>端口：25565<br><button class="copy-btn" onclick="copyToClipboard('3c3u.org:25565')">📋 复制地址</button></div>
+          <div class="server-box"><strong>⚔️ 5C5U·无规则无政府（Java/基岩版）</strong><br>地址：5C5U.aternos.me<br>端口：26591<br><button class="copy-btn" onclick="copyToClipboard('5C5U.aternos.me:26591')">📋 复制地址</button></div>
+          <div class="server-box"><strong>☁️ 雨云·互通服务器（Java/基岩版）</strong><br>地址：udpsq.rainplay.cn<br>端口：46271<br><button class="copy-btn" onclick="copyToClipboard('udpsq.rainplay.cn:46271')">📋 复制地址</button></div>
+        </div>
+        <p style="margin-top: 24px; padding: 16px; background: #e6ddce; border-radius: 28px;">📢 官方一群：1090578436 &nbsp;|&nbsp; 非官方二群：1091304030<br>💡 加群请备注“极寒玩家”，欢迎加入庄园大家庭！</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 画廊页面 ========== -->
+  <div id="pageGallery" class="page">
+    <div class="master-card">
+      <div class="card-inner">
+        <h2 style="font-size: 28px; margin-bottom: 20px;">📸 庄园精彩截图（共37张）</h2>
+        <div class="gallery-grid" id="galleryGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 商店页面 ========== -->
+  <div id="pageShop" class="page">
+    <div class="master-card">
+      <div class="card-inner">
+        <div class="balance-card"><span class="balance-label">💰 我的资源币</span><span class="balance-value" id="shopBalanceDisplay">0</span></div>
+        <div class="shop-tabs">
+          <button class="shop-tab active" id="shopVillageBtn" onclick="setShop('village')">🏡 村庄农家乐商店</button>
+          <button class="shop-tab" id="shop5c5uBtn" onclick="setShop('5c5u')">⚔️ 5C5U 商店 (物价×10)</button>
+        </div>
+        <div id="shopGrid" class="shop-grid"></div>
+        <div class="bill-area"><h3>🧾 最新兑换账单</h3><div id="receiptContent" class="empty-bill">✨ 兑换物品后，账单将显示在这里 ✨</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 设置页面 ========== -->
+  <div id="pageSettings" class="page">
+    <div class="master-card">
+      <div class="card-inner">
+        <h2 style="font-size: 28px; margin-bottom: 20px;">⚙️ 庄园设置</h2>
+        <div style="display: flex; justify-content: space-between; padding: 16px 0; border-bottom: 1px dashed #9ab0b0;"><span style="font-weight: 700; color: #23555e;">📌 当前版本</span><span style="color: #0e363e;">1.26.29.5</span></div>
+        <div style="display: flex; justify-content: space-between; padding: 16px 0; border-bottom: 1px dashed #9ab0b0;"><span style="font-weight: 700; color: #23555e;">🏆 资源币系统</span><span style="color: #0e363e;">JSONBin.io 云端同步</span></div>
+        <div style="display: flex; justify-content: space-between; padding: 16px 0; border-bottom: 1px dashed #9ab0b0;"><span style="font-weight: 700; color: #23555e;">🎵 音乐数量</span><span style="color: #0e363e;">22首精选</span></div>
+        <div style="display: flex; justify-content: space-between; padding: 16px 0; border-bottom: 1px dashed #9ab0b0;"><span style="font-weight: 700; color: #23555e;">📦 模组数量</span><span style="color: #0e363e;">26个</span></div>
+        <div style="display: flex; justify-content: space-between; padding: 16px 0;"><span style="font-weight: 700; color: #23555e;">📸 画廊截图</span><span style="color: #0e363e;">37张</span></div>
+        <div style="margin-top: 24px; padding: 16px; background: #e6ddce; border-radius: 28px; font-size: 13px; color: #5a6e5e;">💡 提示：资源币数据存储在JSONBin.io云端，换设备后登录同一账号即可同步。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 底部音乐栏 ========== -->
+  <div class="music-bar">
+    <button class="music-btn" id="playBtn">▶️</button>
+    <div class="music-info"><div class="music-title" id="currentTitle">Lovely</div><div class="music-artist" id="currentArtist">Billie Eilish & Khalid</div></div>
+    <input type="range" class="progress-bar" id="progressBar" min="0" max="100" value="0">
+    <span id="currentTime" style="font-size: 11px;">0:00</span>
+    <span id="totalTime" style="font-size: 11px;">0:00</span>
+    <input type="range" id="volSlider" min="0" max="100" value="30" style="width: 80px;">
+  </div>
+  <audio id="bgMusic" loop></audio>
+</div>
+
+<!-- ========== 页脚 ========== -->
+<div class="foot"><div><span>版本 1.26.29.5</span><span class="dynamic-msg" id="dynText">❄️ 极寒之地</span></div><div><span>🏔️❄️</span><span>🔥 温泉已备好</span></div></div>
+
+<script>
+// ============================================
+// JSONBin.io 配置 - 使用你提供的密钥和 Bin ID
+// ============================================
+const MASTER_KEY = "$2a$10$Xx9jXkA37xtQiR2gmbOkCuC1x9CFgtKBpDt7ljIFAjXhtDw7/JJVm";
+const ACCESS_KEY = "$2a$10$SBoNNSwHe1LQyzavrPY0NesJwiVyTr/XKPwogj0XeM1gTS6Q2ZYtC";
+const BIN_ID = "30c04aebd9407735b7d57904aec54053852bdb436773a5cb31d3b0d260fe297c9aeb7cccd81119e9b8dccdce5aa95632b4cc3018d3a2d05647aabf1f";
+const API_BASE = "https://api.jsonbin.io/v3/b";
+
+let currentUser = null;
+let currentBalance = 0;
+let currentShop = "village";
+let currentUserData = null;
+
+// 商品列表（11种）
+const ITEMS = [
+  { id: "dirt", name: "泥土块", basePrice: 5, amount: 64, icon: "🟫", desc: "🌱 来自极寒草甸的肥沃泥土，适合快速搭建临时地基、种植耐寒作物。64个为一组，是庄园基础建设中不可或缺的物资。" },
+  { id: "cobble", name: "原石", basePrice: 8, amount: 64, icon: "🪨", desc: "⛰️ 未经烧制的天然原石，硬度适中，是制造石质工具、熔炉以及防御工事的核心原料。每组64块，性价比超高。" },
+  { id: "stone", name: "石头(烧制)", basePrice: 10, amount: 64, icon: "🧱", desc: "🔥 将原石投入熔炉高温烧制而成的致密石材，抗爆炸强度提升。广泛用于高级建筑、红石机械外壳以及庄园纪念碑。" },
+  { id: "obsidian", name: "黑曜石", basePrice: 15, amount: 1, icon: "⚫", desc: "🌋 岩浆遇水凝结而成的暗黑晶石，爆炸抗性极高，是建造下界传送门和凋灵骷髅农场的必备材料。" },
+  { id: "flint", name: "燧石", basePrice: 20, amount: 1, icon: "🔪", desc: "⛏️ 挖掘沙砾时概率获得的锋利碎片，与铁锭结合可制造打火石，点燃下界传送门。亦是制作箭矢的重要构件。" },
+  { id: "diamond", name: "钻石锭", basePrice: 30, amount: 1, icon: "💎", desc: "✨ 极寒深层矿脉中孕育的璀璨宝石，游戏内顶级矿物。可打造钻石装备、附魔台以及唱片机，是庄园实力的象征。" },
+  { id: "redstone", name: "红石粉", basePrice: 25, amount: 1, icon: "🔴", desc: "⚡ 蕴藏能量的红色粉末，红石电路的核心元件。可制作自动农场、物品分类器、高频脉冲等机械。" },
+  { id: "iron", name: "铁锭", basePrice: 25, amount: 1, icon: "🔩", desc: "⚙️ 万能金属锭，由铁矿石熔炼而成。制作铁砧、漏斗、铁轨以及大量红石组件的基础材料。" },
+  { id: "copper", name: "铜锭", basePrice: 20, amount: 1, icon: "🟠", desc: "🔌 新世代的导电金属，可制作避雷针、望远镜以及铜块建筑。随时间氧化变绿，极具复古风格。" },
+  { id: "lapis", name: "青金石", basePrice: 20, amount: 1, icon: "🔵", desc: "📘 蕴含魔力的蓝色矿石，用于附魔台中进行等级附魔。也是制作蓝色染料和装饰方块的原料。" },
+  { id: "gold", name: "金锭", basePrice: 20, amount: 1, icon: "🟡", desc: "👑 稀有的贵金属，由金矿烧制而成。制作金苹果、动力铁轨、时钟以及下界合金升级模板。" }
+];
+
+// 歌单（22首）
+const songs = [
+  { src: "music/Lovely.mp3", title: "Lovely", artist: "Billie Eilish & Khalid" },
+  { src: "music/DreamItPossible.mp3", title: "Dream It Possible", artist: "Delacey" },
+  { src: "music/ChipiChipiChapaChapa.mp3", title: "ChipiChipiChapaChapa", artist: "lusttqwe/lorche/Bexter/Kairas" },
+  { src: "music/Wasted.mp3", title: "Wasted", artist: "huken/Murkish" },
+  { src: "music/OnceUponATime.mp3", title: "Once Upon A Time", artist: "Max Oazo & Moonessa" },
+  { src: "music/蛋生蛋.mp3", title: "蛋生蛋", artist: "EMOWZ" },
+  { src: "music/3Strikes.mp3", title: "3 Strikes", artist: "Terror Jr" },
+  { src: "music/PASSOBEMSOLTO.mp3", title: "PASSO BEM SOLTO", artist: "Atlxs" },
+  { src: "music/MontagemNadaTropica.mp3", title: "Montagem Nada Tropica", artist: "Eternxlkz" },
+  { src: "music/alliwantisyou.mp3", title: "All I Want Is You", artist: "Rebzyyx/hoshie star" },
+  { src: "music/起舞.mp3", title: "起舞", artist: "扎西平措" },
+  { src: "music/Simpa.mp3", title: "Simpa", artist: "RaiM/Artur/Adil" },
+  { src: "music/BadApple.mp3", title: "Bad Apple", artist: "初音未来" },
+  { src: "music/Y.M.C.A..mp3", title: "Y.M.C.A.", artist: "Village People" },
+  { src: "music/不问ciaga.mp3", title: "不问ciaga", artist: "指尖笑" },
+  { src: "music/MontagemMiau.mp3", title: "Montagem Miau", artist: "Lenar/Leonardo P" },
+  { src: "music/一路生花.mp3", title: "一路生花", artist: "温奕心" },
+  { src: "music/HEAVENLYJUMPSTYLE.mp3", title: "HEAVENLY JUMPSTYLE", artist: "TWXNY/Sxilwix/INNXCENCE" },
+  { src: "music/IWANNABEYOURSLAVE.mp3", title: "I WANNA BE YOUR SLAVE", artist: "Måneskin" },
+  { src: "music/APT..mp3", title: "APT.", artist: "ROSÉ & Bruno Mars" },
+  { src: "music/Higher.mp3", title: "Higher", artist: "Tobu" },
+  { src: "music/一笑江湖.mp3", title: "一笑江湖", artist: "闻人听書" }
+];
+
+// 模组列表（26个）
+const modsList = [
+  "[3D皮肤层] skinlayers3d-forge-1.9.2-mc1.20.1.jar", "[动态光源] dynamiclights-1.20.1.2.jar",
+  "[极简血量显示] Neat-1.20.1-41-FORGE.jar", "[聊天头像] chat_heads-0.14.2-forge-1.20.jar",
+  "[模组目录] catalogue-forge-1.20.1-1.8.0.jar", "[暮色森林] twilightforest-1.20.1-4.3.2508-universal.jar",
+  "[内存泄漏修复] memoryleakfix-forge-1.17+-1.1.5.jar", "[苹果皮] appleskin-forge-mc1.20.1-2.5.1.jar",
+  "[铷·扩展] rubidium-extra-0.5.4.4+mc1.20.1-build.131.jar", "[铷] rubidium-mc1.20.1-0.7.1.jar",
+  "[铷] rubidium-mc1.20.1-0.7.1a.jar", "[实体渲染机制优化] entityculling-forge-1.9.3-mc1.20.1.jar",
+  "[属性修复] AttributeFix-Forge-1.20.1-21.0.4.jar", "[铁氧体磁芯] ferritecore-6.0.1-forge.jar",
+  "[投影] litematica-fabric-1.20.1-0.15.4.jar", "[现代化修复] modernfix-forge-5.15.0+mc1.20.1.jar",
+  "[一键背包整理Next] InventoryProfilesNext-forge-1.20-1.10.19.jar", "[JEI物品管理器] jei-1.20.1-forge-15.20.0.118.jar",
+  "[Xaero的世界地图] XaerosWorldMap_1.37.0_Forge_1.20.jar", "[Xaero的小地图] Xaeros_Minimap_25.2.10_Forge_1.20.jar",
+  "embeddium-0.3.31+mc1.20.1.jar", "fabric-api-0.92.6+1.11.14+1.20.1.jar",
+  "libIPN-forge-1.20-4.0.2.jar", "malilib-fabric-1.20.1-0.16.3.jar",
+  "prefab-1.10.0.1.jar", "voicechat-forge-1.21.8-2.5.35.jar"
+];
+
+// 画廊图片（37张）
+const galleryImages = [];
+for (let i = 7091; i <= 7095; i++) galleryImages.push(`Java-Manor-Server-Game-Pic/IMG_${i}.jpeg`);
+for (let i of [7106,7107,7335,7336,7338,7339,7340,7341,7342,7343,7382,7383,7384,7385,7386,7387,7388,7406,7407,7408]) galleryImages.push(`Java-Manor-Server-Game-Pic/IMG_${i}.jpeg`);
+galleryImages.push("Java-Manor-Server-Game-Pic/61697902DCBF73AB9497DFECD1726537.png");
+galleryImages.push("Java-Manor-Server-Game-Pic/AEEFDCCAAA2367791042F4726AB9D522.png");
+galleryImages.push("Java-Manor-Server-Game-Pic/3503596588C7B4C4D82F826FC882EFF9.png");
+galleryImages.push("Java-Manor-Server-Game-Pic/507C9E994081B3CF6DA5CABE5194B876.png");
+galleryImages.push("Java-Manor-Server-Game-Pic/FE5450AA88E9071C85623E43ABC8CE58.png");
+galleryImages.push("Java-Manor-Server-Game-Pic/ED95C37BF2FB435C284500BE00A7AD12.png");
+
+// SHA-512 加密
+function sha512(str) {
+  return CryptoJS.SHA512(str).toString();
+}
+
+// 生成用户 Bin ID
+function getUserBinId(username, email, password) {
+  return sha512(`${username}|${email}|${password}`);
+}
+
+// 加载所有用户（从主 Bin）
+async function loadAllUsers() {
+  try {
+    const resp = await fetch(`${API_BASE}/${BIN_ID}/latest`, {
+      headers: { "X-Master-Key": MASTER_KEY }
+    });
+    if (resp.status === 404) return { users: [], nextId: 1 };
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const data = await resp.json();
+    return data.record || { users: [], nextId: 1 };
+  } catch (e) {
+    console.error("加载用户列表失败:", e);
+    return { users: [], nextId: 1 };
+  }
+}
+
+// 保存所有用户（到主 Bin）
+async function saveAllUsers(data) {
+  const resp = await fetch(`${API_BASE}/${BIN_ID}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json", "X-Master-Key": MASTER_KEY },
+    body: JSON.stringify(data)
+  });
+  if (!resp.ok) throw new Error("保存失败");
+  return await resp.json();
+}
+
+// 加载用户个人数据
+async function loadUserPersonalData(userBinId) {
+  try {
+    const resp = await fetch(`${API_BASE}/${userBinId}/latest`, {
+      headers: { "X-Master-Key": MASTER_KEY }
+    });
+    if (resp.status === 404) return null;
+    if (!resp.ok) throw new Error("加载失败");
+    const data = await resp.json();
+    return data.record;
+  } catch (e) {
+    return null;
+  }
+}
+
+// 保存用户个人数据
+async function saveUserPersonalData(userBinId, userData) {
+  const resp = await fetch(`${API_BASE}/${userBinId}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json", "X-Master-Key": MASTER_KEY },
+    body: JSON.stringify(userData)
+  });
+  if (!resp.ok) throw new Error("保存个人数据失败");
+  return await resp.json();
+}
+
+// 注册
+async function register() {
+  const username = document.getElementById("regUsername").value.trim();
+  const email = document.getElementById("regEmail").value.trim();
+  const password = document.getElementById("regPassword").value;
+  const confirm = document.getElementById("regConfirm").value;
+
+  if (!username || username.length < 2) {
+    document.getElementById("registerError").innerText = "用户名至少2个字符";
+    return;
+  }
+  if (!email || !email.includes("@")) {
+    document.getElementById("registerError").innerText = "请输入有效邮箱";
+    return;
+  }
+  if (!password || password.length < 6) {
+    document.getElementById("registerError").innerText = "密码至少6位";
+    return;
+  }
+  if (password !== confirm) {
+    document.getElementById("registerError").innerText = "两次密码不一致";
+    return;
+  }
+
+  const allData = await loadAllUsers();
+  const users = allData.users || [];
+
+  if (users.some(u => u.username === username)) {
+    document.getElementById("registerError").innerText = "用户名已存在";
+    return;
+  }
+  if (users.some(u => u.email === email)) {
+    document.getElementById("registerError").innerText = "邮箱已被注册";
+    return;
+  }
+
+  const userId = allData.nextId || 1;
+  const userBinId = getUserBinId(username, email, password);
+
+  const newUser = {
+    id: userId,
+    username: username,
+    email: email,
+    userBinId: userBinId,
+    createdAt: new Date().toISOString()
+  };
+
+  const userPersonalData = {
+    username: username,
+    email: email,
+    balance: 0,
+    lastSign: "",
+    lastShare: "",
+    version: "1.26.29.5"
+  };
+
+  try {
+    await saveUserPersonalData(userBinId, userPersonalData);
+    users.push(newUser);
+    await saveAllUsers({ users: users, nextId: userId + 1 });
+    document.getElementById("registerSuccess").innerText = "注册成功！请登录";
+    setTimeout(() => showLoginForm(), 1500);
+  } catch (e) {
+    document.getElementById("registerError").innerText = "注册失败：" + e.message;
+  }
+}
+
+// 登录
+async function login() {
+  const username = document.getElementById("loginUsername").value.trim();
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value;
+
+  if (!username || !email || !password) {
+    document.getElementById("loginError").innerText = "请填写完整信息";
+    return;
+  }
+
+  const allData = await loadAllUsers();
+  const user = allData.users.find(u => u.username === username && u.email === email);
+
+  if (!user) {
+    document.getElementById("loginError").innerText = "账号不存在";
+    return;
+  }
+
+  const userBinId = getUserBinId(username, email, password);
+  if (user.userBinId !== userBinId) {
+    document.getElementById("loginError").innerText = "密码错误";
+    return;
+  }
+
+  const personalData = await loadUserPersonalData(userBinId);
+  if (!personalData) {
+    document.getElementById("loginError").innerText = "用户数据加载失败";
+    return;
+  }
+
+  currentUser = { binId: userBinId, username: username, email: email };
+  currentUserData = personalData;
+  currentBalance = personalData.balance || 0;
+
+  localStorage.setItem("lastUser", JSON.stringify({ username: username, email: email }));
+
+  document.getElementById("authWrapper").style.display = "none";
+  document.getElementById("mainContent").classList.add("show");
+  updateBalanceDisplay();
+  checkSignStatus();
+}
+
+function logout() {
+  if (confirm("确定要退出登录吗？")) {
+    currentUser = null;
+    currentUserData = null;
+    currentBalance = 0;
+    document.getElementById("authWrapper").style.display = "block";
+    document.getElementById("mainContent").classList.remove("show");
+    showLoginForm();
+    localStorage.removeItem("lastUser");
+  }
+}
+
+async function updateUserData() {
+  if (!currentUser) return;
+  currentUserData.balance = currentBalance;
+  await saveUserPersonalData(currentUser.binId, currentUserData);
+}
+
+function updateBalanceDisplay() {
+  const b1 = document.getElementById("balanceDisplay");
+  const b2 = document.getElementById("shopBalanceDisplay");
+  if (b1) b1.innerText = currentBalance;
+  if (b2) b2.innerText = currentBalance;
+}
+
+async function doSign() {
+  if (!currentUser) return;
+  const today = new Date().toDateString();
+  if (currentUserData.lastSign === today) {
+    alert("今天已经签过到了！明天再来吧~");
+    return;
+  }
+  currentBalance += 10;
+  currentUserData.lastSign = today;
+  currentUserData.balance = currentBalance;
+  await updateUserData();
+  updateBalanceDisplay();
+  alert("✅ 签到成功！获得 10 资源币！");
+  checkSignStatus();
+}
+
+async function doShare() {
+  if (!currentUser) return;
+  const today = new Date().toDateString();
+  if (currentUserData.lastShare === today) {
+    alert("今天已经分享过了！明天再来吧~");
+    return;
+  }
+  currentBalance += 5;
+  currentUserData.lastShare = today;
+  currentUserData.balance = currentBalance;
+  await updateUserData();
+  updateBalanceDisplay();
+  alert("✅ 分享成功！获得 5 资源币！");
+}
+
+function checkSignStatus() {
+  const signBtn = document.getElementById("signBtn");
+  if (currentUserData && currentUserData.lastSign === new Date().toDateString()) {
+    if (signBtn) signBtn.style.opacity = "0.6";
+  } else {
+    if (signBtn) signBtn.style.opacity = "1";
+  }
+}
+
+async function exchangeItem(item) {
+  if (!currentUser) return;
+  let price = item.basePrice;
+  if (currentShop === "5c5u") price = item.basePrice * 10;
+
+  if (currentBalance < price) {
+    alert(`❌ 资源币不足！需要 ${price}，当前 ${currentBalance}`);
+    return;
+  }
+
+  const beforeBalance = currentBalance;
+  const afterBalance = beforeBalance - price;
+  currentBalance = afterBalance;
+  currentUserData.balance = currentBalance;
+  await updateUserData();
+  updateBalanceDisplay();
+
+  const now = new Date();
+  const billNo = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, "0")}${String(now.getDate()).padStart(2, "0")}${String(now.getHours()).padStart(2, "0")}${String(now.getMinutes()).padStart(2, "0")}${String(now.getSeconds()).padStart(2, "0")}`;
+  const timeStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")} ${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}`;
+
+  const receiptHTML = `
+    <div class="receipt-paper" id="receiptForShare">
+      <div style="text-align:center; font-size:22px; font-weight:800;">🧾 庄园兑换凭证</div>
+      <div style="border-top:1px dashed #baa875; margin:16px 0;"></div>
+      <div><strong>📌 单号：</strong>${billNo}</div>
+      <div><strong>🏪 商店：</strong>${currentShop === "village" ? "村庄农家乐商店" : "5C5U 无政府商店"}</div>
+      <div><strong>🎁 商品：</strong>${item.icon} ${item.name} × ${item.amount}</div>
+      <div><strong>💰 单价：</strong>${price} 资源币</div>
+      <div><strong>💸 总价：</strong>${price} 资源币</div>
+      <div><strong>📉 兑换前：</strong>${beforeBalance} 资源币</div>
+      <div><strong>📈 兑换后：</strong>${afterBalance} 资源币</div>
+      <div><strong>⏱️ 时间：</strong>${timeStr}</div>
+      <div style="border-top:1px dashed #baa875; margin:16px 0;"></div>
+      <div style="text-align:center;">❄️ Java庄园农家乐 · 极寒之地玩家 · v1.26.29.5<br>QQ群：1091304030</div>
+    </div>
+    <div style="margin-top:16px; text-align:center;">
+      <button class="action-btn" id="shareReceiptBtn" style="background:#2e5f6e;">📸 生成截图分享到QQ群</button>
+    </div>
+  `;
+
+  document.getElementById("receiptContent").innerHTML = receiptHTML;
+
+  setTimeout(() => {
+    const shareBtn = document.getElementById("shareReceiptBtn");
+    if (shareBtn) {
+      shareBtn.onclick = async () => {
+        const receiptDiv = document.getElementById("receiptForShare");
+        if (receiptDiv) {
+          try {
+            const canvas = await html2canvas(receiptDiv, { scale: 2.5, backgroundColor: "#fffef7" });
+            const link = document.createElement("a");
+            link.download = `JavaManor_Bill_${billNo}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+            alert("✅ 截图已保存！请分享到QQ群：1091304030");
+          } catch (err) {
+            alert("截图失败，请重试");
+          }
+        }
+      };
+    }
+  }, 100);
+
+  alert(`🎉 兑换成功！\n✨ 获得 ${item.name} × ${item.amount}\n💎 消耗 ${price} 资源币`);
+}
+
+function renderShop() {
+  const grid = document.getElementById("shopGrid");
+  if (!grid) return;
+  const multiplier = currentShop === "5c5u" ? 10 : 1;
+  let html = "";
+  for (let item of ITEMS) {
+    const price = item.basePrice * multiplier;
+    html += `
+      <div class="item-card">
+        <div class="item-emoji">${item.icon}</div>
+        <div class="item-name">${item.name}</div>
+        <div class="item-amount">📦 数量：${item.amount}</div>
+        <div class="item-price">💰 ${price} 资源币</div>
+        <div class="item-desc">📖 ${item.desc}</div>
+        <button class="exchange-btn" onclick="exchangeItem({id:'${item.id}', name:'${item.name}', basePrice:${item.basePrice}, amount:${item.amount}, icon:'${item.icon}'})">🛒 立即兑换</button>
+      </div>
+    `;
+  }
+  grid.innerHTML = html;
+}
+
+function setShop(type) {
+  currentShop = type;
+  const villageBtn = document.getElementById("shopVillageBtn");
+  const c5c5uBtn = document.getElementById("shop5c5uBtn");
+  if (type === "village") {
+    villageBtn.classList.add("active");
+    c5c5uBtn.classList.remove("active");
+  } else {
+    c5c5uBtn.classList.add("active");
+    villageBtn.classList.remove("active");
+  }
+  renderShop();
+}
+
+function renderSongs() {
+  const list = document.getElementById("songList");
+  if (!list) return;
+  let html = "";
+  songs.forEach((s, i) => {
+    html += `<div class="song-card" onclick="playSong(${i})"><div style="font-size:24px;">🎵</div><div style="flex:1;"><div class="music-title">${s.title}</div><div class="music-artist">${s.artist}</div></div></div>`;
+  });
+  list.innerHTML = html;
+}
+
+function renderMods() {
+  const list = document.getElementById("modsList");
+  if (!list) return;
+  let html = "";
+  for (let m of modsList) {
+    let name = m.replace(".jar", "");
+    html += `<div class="mod-card"><span>📦 ${name}</span><a href="jar-mod/${encodeURIComponent(m)}" download class="mod-download-btn">⬇️ 下载</a></div>`;
+  }
+  list.innerHTML = html;
+}
+
+function renderGallery() {
+  const grid = document.getElementById("galleryGrid");
+  if (!grid) return;
+  let html = "";
+  for (let img of galleryImages) {
+    html += `<div class="gallery-item"><img src="${img}" alt="庄园截图" loading="lazy" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect fill=%22%23333%22 width=%22100%22 height=%22100%22/%3E%3Ctext x=%2250%22 y=%2250%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22white%22 font-size=%2212%22%3E📸%3C/text%3E%3C/svg%3E'"></div>`;
+  }
+  grid.innerHTML = html;
+}
+
+let currentSongIndex = 0;
+let isPlaying = false;
+const audio = document.getElementById("bgMusic");
+
+function playSong(index) {
+  currentSongIndex = index;
+  const song = songs[index];
+  document.getElementById("currentTitle").innerText = song.title;
+  document.getElementById("currentArtist").innerText = song.artist;
+  audio.src = song.src;
+  audio.load();
+  audio.play();
+  isPlaying = true;
+  document.getElementById("playBtn").innerText = "⏸️";
+  document.querySelectorAll(".song-card").forEach((card, idx) => {
+    if (idx === index) {
+      card.style.background = "#d4e8e0";
+      card.style.border = "1px solid #8abfaa";
+    } else {
+      card.style.background = "#f5f0e0";
+      card.style.border = "1px solid #d9cfb8";
+    }
+  });
+}
+
+function togglePlay() {
+  if (isPlaying) {
+    audio.pause();
+    document.getElementById("playBtn").innerText = "▶️";
+  } else {
+    audio.play();
+    document.getElementById("playBtn").innerText = "⏸️";
+  }
+  isPlaying = !isPlaying;
+}
+
+function showPage(page) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("show"));
+  document.getElementById(`page${page.charAt(0).toUpperCase() + page.slice(1)}`).classList.add("show");
+  if (page === "shop") renderShop();
+  if (page === "music") renderSongs();
+  if (page === "mods") renderMods();
+  if (page === "gallery") renderGallery();
+}
+
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text);
+  alert("✅ 已复制：" + text);
+}
+
+function showLoginForm() {
+  document.getElementById("loginForm").style.display = "block";
+  document.getElementById("registerForm").style.display = "none";
+  document.getElementById("loginError").innerText = "";
+  document.getElementById("registerError").innerText = "";
+  document.getElementById("registerSuccess").innerText = "";
+}
+
+function showRegisterForm() {
+  document.getElementById("loginForm").style.display = "none";
+  document.getElementById("registerForm").style.display = "block";
+  document.getElementById("loginError").innerText = "";
+  document.getElementById("registerError").innerText = "";
+  document.getElementById("registerSuccess").innerText = "";
+}
+
+audio.addEventListener("timeupdate", () => {
+  if (audio.duration) {
+    const percent = (audio.currentTime / audio.duration) * 100;
+    document.getElementById("progressBar").value = percent;
+    const currentMin = Math.floor(audio.currentTime / 60);
+    const currentSec = String(Math.floor(audio.currentTime % 60)).padStart(2, "0");
+    document.getElementById("currentTime").innerText = `${currentMin}:${currentSec}`;
+  }
+});
+
+audio.addEventListener("loadedmetadata", () => {
+  const totalMin = Math.floor(audio.duration / 60);
+  const totalSec = String(Math.floor(audio.duration % 60)).padStart(2, "0");
+  document.getElementById("totalTime").innerText = `${totalMin}:${totalSec}`;
+});
+
+audio.addEventListener("ended", () => {
+  const nextIndex = (currentSongIndex + 1) % songs.length;
+  playSong(nextIndex);
+});
+
+document.getElementById("progressBar").oninput = (e) => {
+  if (audio.duration) audio.currentTime = (e.target.value / 100) * audio.duration;
+};
+document.getElementById("volSlider").oninput = (e) => { audio.volume = e.target.value / 100; };
+
+(function() {
+  const msgs = ["❄️ -8°C 晴转雪 · 注意保暖", "☕ 暖炉已燃 围炉夜话", "🎣 冰钓报名 12/20 人", "🌲 木材 128组 库存充足", "⛷️ 雪地指南已更新 V2.0", "🧊 遗迹组队中 缺1人", "🔥 温泉回血+25% 生命恢复II", "🦊 雪狐幼崽出没 可驯养", "🚂 观光车整点发车", "📦 模组包已更新至26个", "🎵 新增10首精选歌曲", "💎 钻石锭限时8折优惠"];
+  const el = document.getElementById("dynText");
+  if (el) {
+    let idx = Math.floor(Math.random() * msgs.length);
+    el.innerHTML = msgs[idx];
+    setInterval(() => { idx = (idx + 1) % msgs.length; if (el) el.innerHTML = msgs[idx]; }, 5000);
+  }
+})();
+
+function autoFillLastUser() {
+  const lastUser = localStorage.getItem("lastUser");
+  if (lastUser) {
+    try {
+      const user = JSON.parse(lastUser);
+      if (user.username) document.getElementById("loginUsername").value = user.username;
+      if (user.email) document.getElementById("loginEmail").value = user.email;
+    } catch(e) {}
+  }
+}
+
+document.getElementById("loginBtn").onclick = login;
+document.getElementById("registerBtn").onclick = register;
+document.getElementById("logoutBtn").onclick = logout;
+document.getElementById("showRegisterBtn").onclick = showRegisterForm;
+document.getElementById("showLoginBtn").onclick = showLoginForm;
+document.getElementById("signBtn").onclick = doSign;
+document.getElementById("shareBtn").onclick = doShare;
+document.getElementById("playBtn").onclick = togglePlay;
+
+window.showPage = showPage;
+window.setShop = setShop;
+window.exchangeItem = exchangeItem;
+window.playSong = playSong;
+window.copyToClipboard = copyToClipboard;
+
+function init() {
+  autoFillLastUser();
+  renderShop();
+  console.log("%c Java庄园农家乐 · 极寒之地玩家 v1.26.29.5 ", "color: #fff; background: #2e5f6e; font-size: 16px; padding: 8px 16px; border-radius: 8px;");
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", init);
+} else {
+  init();
+}
+</script>
+</body>
+</html>
