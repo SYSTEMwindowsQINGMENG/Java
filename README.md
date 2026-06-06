@@ -4,8 +4,9 @@
 
 这是一个为 QQ 群 **“Java庄园农家乐 极寒之地玩家”** 设计的单页信息聚合网站。页面采用卡片式布局，融合了田园温馨与冰雪极寒的视觉风格，集中展示了群号、服务器连接信息、庄园建设数据以及最新动态。
 
-### https://systemwindowsqingmeng.github.io/Java/
+### 仓库链接：https://github.com/SYSTEMwindowsQINGMENG/Java-Manor-Farmhouse-Extreme-Cold-Land-Player.github.io
 
+### Page页面链接：https://systemwindowsqingmeng.github.io/Java/
 
 ## 🧩 页面功能模块
 
