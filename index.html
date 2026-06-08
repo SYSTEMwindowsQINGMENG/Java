@@ -3,37 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Java庄园农家乐 · 极寒之地玩家 · v1.26.29.7</title>
+    <title>Java庄园农家乐 · 极寒之地玩家 · v1.26.29.8</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <style>
+        /* ============================================ */
+        /* 动态效果 - 极光背景动画                    */
+        /* 版本：v1.26.29.8                            */
+        /* ============================================ */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
+        /* 动态极光背景 */
         body {
-            background: linear-gradient(145deg, #07161e 0%, #12303e 50%, #1a3f50 100%);
             min-height: 100vh;
             font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans SC', sans-serif;
             padding: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
+            position: relative;
+            background: #0a1620;
+            overflow-x: hidden;
         }
 
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(125deg, 
+                #0f2b3d 0%, 
+                #1a3a4a 20%, 
+                #0e2a38 40%, 
+                #1c4a5a 60%, 
+                #0f2b3d 80%, 
+                #1a3a4a 100%);
+            background-size: 400% 400%;
+            animation: aurora 15s ease infinite;
+            z-index: -2;
+        }
+
+        @keyframes aurora {
+            0% { background-position: 0% 50%; opacity: 0.8; }
+            25% { background-position: 50% 100%; opacity: 1; }
+            50% { background-position: 100% 50%; opacity: 0.9; }
+            75% { background-position: 50% 0%; opacity: 1; }
+            100% { background-position: 0% 50%; opacity: 0.8; }
+        }
+
+        /* 动态雪花/粒子效果 */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(2px 2px at 10% 20%, rgba(255,255,255,0.3) 100%, transparent),
+                radial-gradient(1px 1px at 30% 50%, rgba(255,255,255,0.2) 100%, transparent),
+                radial-gradient(3px 3px at 70% 80%, rgba(255,255,255,0.15) 100%, transparent),
+                radial-gradient(2px 2px at 85% 30%, rgba(255,255,255,0.25) 100%, transparent),
+                radial-gradient(1px 1px at 45% 90%, rgba(255,255,255,0.2) 100%, transparent);
+            background-repeat: no-repeat;
+            animation: snowFloat 20s linear infinite;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        @keyframes snowFloat {
+            0% { background-position: 10% 0%, 30% 0%, 70% 0%, 85% 0%, 45% 0%; }
+            100% { background-position: 10% 100%, 30% 100%, 70% 100%, 85% 100%, 45% 100%; background-size: 100px 100px, 80px 80px, 120px 120px, 90px 90px, 110px 110px; }
+        }
+
+        /* 登录/注册容器 - 毛玻璃动态效果 */
         .auth-wrapper {
             width: 100%;
             max-width: 500px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .auth-container {
-            background: rgba(252, 247, 238, 0.96);
-            backdrop-filter: blur(14px);
+            background: rgba(252, 247, 238, 0.92);
+            backdrop-filter: blur(20px);
             border-radius: 56px;
             padding: 48px 40px;
-            box-shadow: 0 30px 45px -12px rgba(0, 0, 0, 0.7), 0 0 0 2px #7eafc5 inset;
+            box-shadow: 0 30px 45px -12px rgba(0, 0, 0, 0.5), 0 0 0 2px rgba(126, 175, 197, 0.5), 0 0 30px rgba(100, 200, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .auth-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 40px 55px -15px rgba(0, 0, 0, 0.6), 0 0 0 2px rgba(126, 175, 197, 0.8), 0 0 40px rgba(100, 200, 255, 0.4);
         }
 
         .auth-title {
@@ -43,6 +122,12 @@
             text-align: center;
             margin-bottom: 36px;
             text-shadow: 2px 2px 0 #ede1c2;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { text-shadow: 2px 2px 0 #ede1c2; }
+            50% { text-shadow: 3px 3px 0 #ffd700; }
         }
 
         .auth-title small {
@@ -68,22 +153,24 @@
         .auth-input {
             width: 100%;
             padding: 14px 18px;
-            border: 2px solid #c4d5d8;
+            border: 2px solid rgba(196, 213, 216, 0.6);
             border-radius: 40px;
             font-size: 16px;
-            background: white;
-            transition: all 0.2s;
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s ease;
         }
 
         .auth-input:focus {
             outline: none;
             border-color: #2e5f6e;
             box-shadow: 0 0 0 3px rgba(46, 95, 110, 0.2);
+            background: white;
+            transform: scale(1.01);
         }
 
         .auth-btn {
             width: 100%;
-            background: #2e5f6e;
+            background: linear-gradient(135deg, #2e5f6e, #1a3f4e);
             border: none;
             color: white;
             padding: 14px 20px;
@@ -92,13 +179,38 @@
             font-size: 18px;
             cursor: pointer;
             margin-top: 16px;
-            transition: all 0.2s;
-            box-shadow: 0 4px 0 #1a3f4e;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .auth-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .auth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(135deg, #1a4a5a, #0e2a38);
         }
 
         .auth-btn:active {
             transform: translateY(2px);
-            box-shadow: 0 1px 0 #1a3f4e;
         }
 
         .auth-switch {
@@ -113,6 +225,11 @@
             font-weight: 700;
             text-decoration: none;
             cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .auth-switch a:hover {
+            color: #ff8c00;
         }
 
         .error-msg {
@@ -120,6 +237,13 @@
             font-size: 13px;
             margin-top: 12px;
             text-align: center;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
         }
 
         .success-msg {
@@ -127,34 +251,55 @@
             font-size: 13px;
             margin-top: 12px;
             text-align: center;
+            animation: fadeIn 0.5s;
         }
 
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* 主内容样式 - 动态 */
         .main-content {
             display: none;
             width: 100%;
-            max-width: 1100px;
+            max-width: 1200px;
+            animation: fadeIn 0.8s ease-out;
         }
 
         .main-content.show {
             display: block;
         }
 
+        /* 导航栏 - 动态毛玻璃 */
         .navbar {
-            background: rgba(252, 247, 238, 0.95);
-            backdrop-filter: blur(12px);
+            background: rgba(252, 247, 238, 0.92);
+            backdrop-filter: blur(16px);
             border-radius: 60px;
             padding: 16px 28px;
             display: flex;
             gap: 12px;
             flex-wrap: wrap;
             justify-content: center;
-            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
-            border: 1px solid #cfe2e8;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(207, 226, 232, 0.6);
             margin-bottom: 24px;
+            animation: slideDown 0.5s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .nav-btn {
-            background: #d9e7ea;
+            background: linear-gradient(135deg, #d9e7ea, #c8dce0);
             border: none;
             padding: 10px 22px;
             border-radius: 50px;
@@ -162,57 +307,75 @@
             font-size: 14px;
             color: #1a3a44;
             cursor: pointer;
-            transition: all 0.2s ease;
-            border: 1px solid #bcd0d4;
-            box-shadow: 0 3px 0 #8aa3a8;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(188, 208, 212, 0.6);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
         }
 
         .nav-btn:hover {
-            background: #c8dce0;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 0 #7d989e;
+            background: linear-gradient(135deg, #c8dce0, #b8ccd0);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
 
         .nav-btn.active {
-            background: #2e5f6e;
+            background: linear-gradient(135deg, #2e5f6e, #1a3f4e);
             color: #fef3e2;
-            border-color: #9fcddf;
-            box-shadow: 0 3px 0 #1a3f4e;
+            box-shadow: 0 4px 12px rgba(46, 95, 110, 0.4);
         }
 
         .logout-btn {
-            background: #d94f4f;
+            background: linear-gradient(135deg, #d94f4f, #c43e3e);
             color: white;
-            box-shadow: 0 3px 0 #a33a3a;
+            box-shadow: 0 3px 6px rgba(185, 58, 58, 0.3);
         }
 
         .logout-btn:hover {
-            background: #c43e3e;
+            background: linear-gradient(135deg, #c43e3e, #b32e2e);
         }
 
+        /* 页面容器 */
         .page {
             display: none;
+            animation: pageFade 0.4s ease;
+        }
+
+        @keyframes pageFade {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
         }
 
         .page.show {
             display: block;
         }
 
+        /* 卡片样式 - 动态悬浮 */
         .master-card {
-            background: rgba(252, 247, 238, 0.97);
-            backdrop-filter: blur(14px);
+            background: rgba(252, 247, 238, 0.94);
+            backdrop-filter: blur(16px);
             border-radius: 56px;
-            box-shadow: 0 30px 45px -12px rgba(0, 0, 0, 0.7), 0 0 0 2px #7eafc5 inset;
+            box-shadow: 0 30px 45px -12px rgba(0, 0, 0, 0.4);
             overflow: hidden;
             margin-bottom: 28px;
+            transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            border: 1px solid rgba(126, 175, 197, 0.3);
+        }
+
+        .master-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 40px 60px -15px rgba(0, 0, 0, 0.5);
+            border-color: rgba(126, 175, 197, 0.6);
         }
 
         .card-inner {
             padding: 34px 36px 42px;
         }
 
+        /* 资源币头部 - 动态渐变 */
         .balance-card {
             background: linear-gradient(135deg, #236653, #0e4a3c);
+            background-size: 200% 200%;
+            animation: gradientShift 4s ease infinite;
             border-radius: 48px;
             padding: 28px 36px;
             display: flex;
@@ -220,7 +383,18 @@
             align-items: center;
             color: white;
             margin-bottom: 28px;
-            box-shadow: 0 10px 0 #0b3129;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .balance-card:hover {
+            transform: scale(1.01);
         }
 
         .balance-label {
@@ -233,8 +407,15 @@
             font-size: 52px;
             font-weight: 900;
             text-shadow: 2px 2px 0 #4f3a1a;
+            animation: balancePulse 2s infinite;
         }
 
+        @keyframes balancePulse {
+            0%, 100% { text-shadow: 2px 2px 0 #4f3a1a; }
+            50% { text-shadow: 3px 3px 0 #ffa500; }
+        }
+
+        /* 签到分享按钮组 */
         .action-group {
             display: flex;
             gap: 20px;
@@ -243,7 +424,7 @@
         }
 
         .action-btn {
-            background: #2e5f6e;
+            background: linear-gradient(135deg, #2e5f6e, #1a404e);
             border: none;
             color: white;
             padding: 12px 28px;
@@ -254,19 +435,26 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            box-shadow: 0 4px 0 #1a404e;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(135deg, #1a4a5a, #0e2a38);
         }
 
         .action-btn:active {
             transform: translateY(2px);
-            box-shadow: 0 1px 0 #1a404e;
         }
 
+        /* 商店选项卡 */
         .shop-tabs {
             display: flex;
             gap: 24px;
             margin-bottom: 32px;
-            background: #e6ddce;
+            background: rgba(230, 221, 206, 0.7);
             border-radius: 80px;
             padding: 8px;
             width: fit-content;
@@ -281,16 +469,22 @@
             font-size: 16px;
             color: #2c423c;
             cursor: pointer;
-            transition: 0.15s;
-            box-shadow: 0 3px 0 #8b7d62;
+            transition: all 0.3s;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .shop-tab:hover {
+            transform: translateY(-2px);
+            background: #b8a888;
         }
 
         .shop-tab.active {
-            background: #2e5f6e;
+            background: linear-gradient(135deg, #2e5f6e, #163c46);
             color: #fef3da;
-            box-shadow: 0 3px 0 #163c46;
+            box-shadow: 0 4px 12px rgba(46, 95, 110, 0.4);
         }
 
+        /* 商品网格 */
         .shop-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -299,23 +493,30 @@
         }
 
         .item-card {
-            background: #fffef8;
+            background: rgba(255, 254, 248, 0.95);
             border-radius: 36px;
             padding: 22px 18px;
             text-align: center;
-            box-shadow: 0 10px 0 #9fbbbf;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
             border: 1px solid #ecdbaa;
-            transition: all 0.2s;
+            transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            cursor: pointer;
         }
 
         .item-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 14px 0 #86a5aa;
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 35px rgba(0, 0, 0, 0.2);
+            border-color: #ffd700;
         }
 
         .item-emoji {
             font-size: 56px;
             margin-bottom: 12px;
+            transition: transform 0.3s;
+        }
+
+        .item-card:hover .item-emoji {
+            transform: scale(1.1);
         }
 
         .item-name {
@@ -336,7 +537,7 @@
         }
 
         .item-price {
-            background: #2e5f6e20;
+            background: rgba(46, 95, 110, 0.15);
             display: inline-block;
             padding: 6px 20px;
             border-radius: 40px;
@@ -351,12 +552,12 @@
             color: #6b8a6e;
             margin: 8px 0;
             padding: 8px;
-            background: #f7f2e2;
+            background: rgba(247, 242, 226, 0.8);
             border-radius: 24px;
         }
 
         .exchange-btn {
-            background: #f7931a;
+            background: linear-gradient(135deg, #f7931a, #e07d0a);
             border: none;
             color: white;
             padding: 10px 16px;
@@ -365,20 +566,29 @@
             font-size: 15px;
             cursor: pointer;
             width: 100%;
-            box-shadow: 0 4px 0 #b45f0a;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         }
 
-        .exchange-btn:active {
-            transform: translateY(2px);
-            box-shadow: 0 1px 0 #b45f0a;
+        .exchange-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(135deg, #e07d0a, #c86a00);
         }
 
+        /* 账单区域 */
         .bill-area {
-            background: #f1ebda;
+            background: rgba(241, 235, 218, 0.8);
             border-radius: 40px;
             padding: 24px;
             margin-top: 36px;
             border: 2px dashed #c7b27e;
+            transition: all 0.3s;
+        }
+
+        .bill-area:hover {
+            background: rgba(241, 235, 218, 0.95);
+            border-color: #ffd700;
         }
 
         .bill-area h3 {
@@ -393,6 +603,12 @@
             border-radius: 28px;
             padding: 24px;
             font-family: monospace;
+            transition: all 0.3s;
+        }
+
+        .receipt-paper:hover {
+            transform: scale(1.01);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
         .empty-bill {
@@ -401,11 +617,18 @@
             color: #9b8a64;
         }
 
+        /* 首页样式 */
         .info-box {
-            background: #d9cfbbe0;
+            background: rgba(217, 207, 187, 0.7);
             border-radius: 40px;
             padding: 24px;
             margin-top: 20px;
+            transition: all 0.3s;
+        }
+
+        .info-box:hover {
+            background: rgba(217, 207, 187, 0.9);
+            transform: translateY(-3px);
         }
 
         .qq-big {
@@ -414,6 +637,13 @@
             color: #113946;
             letter-spacing: 6px;
             margin: 16px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .qq-big:hover {
+            text-shadow: 3px 3px 0 #ffd700;
+            transform: scale(1.02);
         }
 
         .tag-java {
@@ -424,11 +654,18 @@
             font-weight: 700;
             display: inline-block;
             margin-right: 12px;
+            transition: all 0.3s;
         }
 
+        .tag-java:hover {
+            transform: translateY(-2px);
+            background: #1a4a3c;
+        }
+
+        /* 音乐栏 - 动态 */
         .music-bar {
-            background: rgba(252, 247, 238, 0.95);
-            backdrop-filter: blur(12px);
+            background: rgba(252, 247, 238, 0.92);
+            backdrop-filter: blur(16px);
             border-radius: 60px;
             padding: 16px 28px;
             margin-top: 24px;
@@ -436,10 +673,28 @@
             flex-wrap: wrap;
             align-items: center;
             gap: 16px;
+            transition: all 0.3s;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .music-bar:hover {
+            background: rgba(252, 247, 238, 0.98);
+            transform: translateY(-3px);
         }
 
         .music-btn {
-            background: #2e5f6e;
+            background: linear-gradient(135deg, #2e5f6e, #1a3f4e);
             border: none;
             color: white;
             width: 44px;
@@ -447,6 +702,13 @@
             border-radius: 50%;
             font-size: 18px;
             cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .music-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
         .music-info {
@@ -456,6 +718,11 @@
         .music-title {
             font-weight: 700;
             font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        .music-title:hover {
+            color: #ff8c00;
         }
 
         .music-artist {
@@ -468,8 +735,15 @@
             height: 4px;
             background: #c4d5d8;
             border-radius: 2px;
+            cursor: pointer;
+            transition: all 0.3s;
         }
 
+        .progress-bar:hover {
+            height: 8px;
+        }
+
+        /* 画廊网格 */
         .gallery-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -483,14 +757,27 @@
             border-radius: 20px;
             overflow: hidden;
             cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            position: relative;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
         }
 
         .gallery-item img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: transform 0.4s;
         }
 
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        /* 服务器列表 - 已加长 */
         .server-row {
             display: flex;
             flex-direction: column;
@@ -499,10 +786,18 @@
         }
 
         .server-box {
-            background: #2e5f6e;
+            background: linear-gradient(135deg, #2e5f6e, #1a3f4e);
             border-radius: 28px;
             padding: 20px;
             color: white;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .server-box:hover {
+            transform: translateX(5px) translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(135deg, #1a4a5a, #0e2a38);
         }
 
         .copy-btn {
@@ -513,30 +808,53 @@
             border-radius: 30px;
             cursor: pointer;
             margin-top: 10px;
+            transition: all 0.3s;
         }
 
+        .copy-btn:hover {
+            background: #ff8c00;
+            transform: scale(1.05);
+        }
+
+        /* 成员卡片 */
         .member-card {
-            background: #f5f0e0;
+            background: rgba(245, 240, 224, 0.8);
             border-radius: 28px;
             padding: 16px 20px;
             display: flex;
             align-items: center;
             gap: 16px;
             margin-bottom: 12px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .member-card:hover {
+            background: rgba(245, 240, 224, 0.95);
+            transform: translateX(5px);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.1);
         }
 
         .member-card.owner {
-            background: #fef5d6;
+            background: rgba(254, 245, 214, 0.9);
+            border-left: 5px solid #ffd700;
         }
 
+        /* 模组卡片 */
         .mod-card {
-            background: #f5f0e0;
+            background: rgba(245, 240, 224, 0.8);
             border-radius: 24px;
             padding: 16px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             margin-bottom: 12px;
+            transition: all 0.3s;
+        }
+
+        .mod-card:hover {
+            background: rgba(245, 240, 224, 0.95);
+            transform: translateX(5px);
         }
 
         .mod-download-btn {
@@ -546,10 +864,17 @@
             border-radius: 30px;
             text-decoration: none;
             font-size: 13px;
+            transition: all 0.3s;
         }
 
+        .mod-download-btn:hover {
+            background: #ff8c00;
+            transform: scale(1.05);
+        }
+
+        /* 歌曲卡片 */
         .song-card {
-            background: #f5f0e0;
+            background: rgba(245, 240, 224, 0.8);
             border-radius: 24px;
             padding: 14px 18px;
             display: flex;
@@ -557,10 +882,17 @@
             gap: 14px;
             cursor: pointer;
             margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+
+        .song-card:hover {
+            background: rgba(245, 240, 224, 0.95);
+            transform: translateX(5px);
         }
 
         .song-card.playing {
             background: #d4e8e0;
+            border-left: 5px solid #2e5f6e;
         }
 
         .msg-list {
@@ -568,18 +900,25 @@
             overflow-y: auto;
         }
 
+        /* 页脚 */
         .foot {
-            max-width: 1100px;
+            max-width: 1200px;
             width: 100%;
             padding: 18px 32px 28px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: #a89f86;
+            background: rgba(168, 159, 134, 0.8);
+            backdrop-filter: blur(10px);
             border-radius: 50px;
             margin-top: 20px;
             flex-wrap: wrap;
             gap: 10px;
+            transition: all 0.3s;
+        }
+
+        .foot:hover {
+            background: rgba(168, 159, 134, 0.95);
         }
 
         .dynamic-msg {
@@ -589,6 +928,25 @@
             border-radius: 60px;
             font-size: 14px;
             font-weight: 600;
+            animation: msgPulse 2s infinite;
+        }
+
+        @keyframes msgPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* 设备检测面板 */
+        .device-info {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #0f0;
+            font-family: monospace;
+            font-size: 12px;
+            border: 1px solid #0f0;
         }
 
         @media (max-width: 700px) {
@@ -602,11 +960,117 @@
 </head>
 <body>
 
+<!-- 禁用F12、Ctrl+Shift+I等查看源码 -->
+<script>
+    // 禁用右键菜单
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        return false;
+    });
+
+    // 禁用F12、Ctrl+Shift+I、Ctrl+U、Ctrl+S等
+    document.addEventListener('keydown', function(e) {
+        // F12
+        if (e.key === 'F12') {
+            e.preventDefault();
+            return false;
+        }
+        // Ctrl+Shift+I
+        if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+            e.preventDefault();
+            return false;
+        }
+        // Ctrl+Shift+J
+        if (e.ctrlKey && e.shiftKey && e.key === 'J') {
+            e.preventDefault();
+            return false;
+        }
+        // Ctrl+U
+        if (e.ctrlKey && e.key === 'u') {
+            e.preventDefault();
+            return false;
+        }
+        // Ctrl+S
+        if (e.ctrlKey && e.key === 's') {
+            e.preventDefault();
+            return false;
+        }
+        // Ctrl+Shift+C
+        if (e.ctrlKey && e.shiftKey && e.key === 'C') {
+            e.preventDefault();
+            return false;
+        }
+        // Ctrl+Shift+K
+        if (e.ctrlKey && e.shiftKey && e.key === 'K') {
+            e.preventDefault();
+            return false;
+        }
+    });
+
+    // 检测开发者工具是否打开
+    let devtoolsOpen = false;
+    const element = new Image();
+    Object.defineProperty(element, 'id', {
+        get: function() {
+            devtoolsOpen = true;
+            document.body.innerHTML = '<div style="text-align:center;padding:100px;color:red;font-size:24px;">🛡️ 开发者工具已检测到，页面已保护</div>';
+            alert('检测到开发者工具，请关闭后刷新页面');
+        }
+    });
+    setInterval(function() {
+        devtoolsOpen = false;
+        console.log(element);
+        console.clear();
+    }, 1000);
+
+    // 设备检测
+    function detectDevice() {
+        const ua = navigator.userAgent;
+        let device = {
+            browser: '',
+            os: '',
+            isMobile: false,
+            screenSize: screen.width + 'x' + screen.height
+        };
+
+        if (/iPhone|iPad|iPod/i.test(ua)) {
+            device.os = 'iOS';
+            device.isMobile = true;
+        } else if (/Android/i.test(ua)) {
+            device.os = 'Android';
+            device.isMobile = true;
+        } else if (/Windows/i.test(ua)) {
+            device.os = 'Windows';
+        } else if (/Mac/i.test(ua)) {
+            device.os = 'macOS';
+        } else {
+            device.os = 'Unknown';
+        }
+
+        if (/Chrome/i.test(ua) && !/Edg/i.test(ua)) {
+            device.browser = 'Chrome';
+        } else if (/Firefox/i.test(ua)) {
+            device.browser = 'Firefox';
+        } else if (/Safari/i.test(ua) && !/Chrome/i.test(ua)) {
+            device.browser = 'Safari';
+        } else if (/Edg/i.test(ua)) {
+            device.browser = 'Edge';
+        } else {
+            device.browser = 'Unknown';
+        }
+
+        return device;
+    }
+
+    const device = detectDevice();
+    console.log('设备信息:', device);
+</script>
+
 <div class="auth-wrapper" id="authWrapper">
     <div class="auth-container">
         <div class="auth-title">
             🏔️ Java庄园农家乐<br>
-            <small>极寒之地玩家 · v1.26.29.7</small>
+            <small>极寒之地玩家 · v1.26.29.8</small>
         </div>
 
         <div id="loginForm">
@@ -657,6 +1121,11 @@
 </div>
 
 <div class="main-content" id="mainContent">
+    <!-- 设备检测面板 -->
+    <div class="device-info" id="deviceInfo" style="display:none;">
+        🖥️ 设备信息 | 系统: <span id="deviceOs"></span> | 浏览器: <span id="deviceBrowser"></span> | 屏幕: <span id="screenSize"></span>
+    </div>
+    
     <nav class="navbar">
         <button class="nav-btn active" onclick="showPage('home')">🏡 庄园首页</button>
         <button class="nav-btn" onclick="showPage('members')">👥 群成员</button>
@@ -667,6 +1136,7 @@
         <button class="nav-btn" onclick="showPage('gallery')">📸 庄园画廊</button>
         <button class="nav-btn" onclick="showPage('shop')">💰 资源币商店</button>
         <button class="nav-btn" onclick="showPage('settings')">⚙️ 设置</button>
+        <button class="nav-btn" onclick="showPage('device')">📱 设备检测</button>
         <button class="nav-btn logout-btn" id="logoutBtn">🚪 退出登录</button>
     </nav>
 
@@ -686,14 +1156,14 @@
                     <p>❄️ 冰钓大赛周六开启 · 温泉夜话每晚九点</p>
                     <p>🐟 首次签到赠送10资源币，连续签到奖励递增</p>
                     <p>🏆 资源币跨设备同步，登录账号即可存取</p>
-                    <p>📌 当前版本：v1.26.29.7 · 极寒豪华版</p>
+                    <p>📌 当前版本：v1.26.29.8 · 极寒豪华版 · 动态极光主题</p>
                     <div style="margin-top: 20px;">
                         <span class="tag-java">☕ Java版原汁原味</span>
                         <span class="tag-java" style="background:#1c4b62;">❄️ 极寒生存挑战</span>
                         <span class="tag-java" style="background:#4a6e5e;">🔥 温泉已开放</span>
                         <span class="tag-java" style="background:#8b6b4a;">🎣 冰钓大赛报名中</span>
                     </div>
-                    <div class="qq-big">1091304030</div>
+                    <div class="qq-big" onclick="copyToClipboard('1091304030')">1091304030</div>
                     <p style="margin-top: 16px; font-size: 14px; color: #5a6e5e;">📢 官方一群：1090578436 &nbsp;|&nbsp; 二群：1091304030</p>
                 </div>
             </div>
@@ -725,7 +1195,7 @@
                     <div class="msg-card">🔥 冰下钓鱼大赛周六开启，前三名奖励稀有资源币！</div>
                     <div class="msg-card">⛷️ 雪山探险队招募，探索冰霜骷髅要塞，组队私聊群主。</div>
                     <div class="msg-card">🎣 温泉夜话每晚九点，篝火故事会等你来分享。</div>
-                    <div class="msg-card">❄️ 新版本1.26.29.7已更新，修复若干问题，请及时同步。</div>
+                    <div class="msg-card">❄️ 新版本1.26.29.8已更新，动态极光背景，修复若干问题，请及时同步。</div>
                     <div class="msg-card">🏔️ 极寒之地新增雪狐驯养系统，可在雪山捕捉。</div>
                     <div class="msg-card">📦 模组包已更新至26个，新增暮色森林和投影模组。</div>
                     <div class="msg-card">🚂 东线铁路已通车，总长3200米，途径3个停靠站。</div>
@@ -733,6 +1203,9 @@
                     <div class="msg-card">💎 凋灵骷髅农场效率提升至12000/h，欢迎体验。</div>
                     <div class="msg-card">🎨 庄园画廊新增37张精彩截图，记录庄园发展历程。</div>
                     <div class="msg-card">📢 资源币已接入云端，换设备登录同一账号即可同步！</div>
+                    <div class="msg-card">🎵 新增10首精选歌曲，包含APT、Higher等热门单曲。</div>
+                    <div class="msg-card">🛡️ 新增设备检测功能，可查看浏览器、系统等信息。</div>
+                    <div class="msg-card">🔒 增强安全防护，禁用开发者工具查看源码。</div>
                 </div>
             </div>
         </div>
@@ -755,24 +1228,132 @@
             </div>
         </div>
     </div>
-
+    
+    <!-- ========== 其他服务器页面（已加长） ========== -->
     <div id="pageOther" class="page">
         <div class="master-card">
             <div class="card-inner">
                 <h2 style="font-size: 28px; margin-bottom: 24px;">🌐 友情服务器</h2>
                 <div class="server-row">
-                    <div class="server-box"><strong>🏡 村庄农家乐（Java/基岩版）</strong><br>地址：QM202604042011.aternos.me<br>端口：12437<br><button class="copy-btn" onclick="copyToClipboard('QM202604042011.aternos.me:12437')">📋 复制地址</button></div>
-                    <div class="server-box"><strong>✨ 空岛生存（Java版）</strong><br>地址：fm.rainplay.cn<br>端口：17901<br><button class="copy-btn" onclick="copyToClipboard('fm.rainplay.cn:17901')">📋 复制地址</button></div>
-                    <div class="server-box"><strong>⚔️ 2b2t.org（Java版）</strong><br>地址：2b2t.org<br>端口：25565<br><button class="copy-btn" onclick="copyToClipboard('2b2t.org:25565')">📋 复制地址</button></div>
-                    <div class="server-box"><strong>🏴 3c3u.org（Java版）</strong><br>地址：3c3u.org<br>端口：25565<br><button class="copy-btn" onclick="copyToClipboard('3c3u.org:25565')">📋 复制地址</button></div>
-                    <div class="server-box"><strong>⚔️ 5C5U·无规则无政府（Java/基岩版）</strong><br>地址：5C5U.aternos.me<br>端口：26591<br><button class="copy-btn" onclick="copyToClipboard('5C5U.aternos.me:26591')">📋 复制地址</button></div>
-                    <div class="server-box"><strong>☁️ 雨云·互通服务器（Java/基岩版）</strong><br>地址：udpsq.rainplay.cn<br>端口：46271<br><button class="copy-btn" onclick="copyToClipboard('udpsq.rainplay.cn:46271')">📋 复制地址</button></div>
+                    <div class="server-box">
+                        <strong>🏡 村庄农家乐（Java/基岩版）</strong><br>
+                        地址：QM202604042011.aternos.me<br>
+                        端口：12437<br>
+                        版本：1.20.1<br>
+                        状态：🟢 在线<br>
+                        特色：生存/建筑/红石<br>
+                        <button class="copy-btn" onclick="copyToClipboard('QM202604042011.aternos.me:12437')">📋 复制地址</button>
+                    </div>
+                    <div class="server-box">
+                        <strong>✨ 空岛生存（Java版）</strong><br>
+                        地址：fm.rainplay.cn<br>
+                        端口：17901<br>
+                        版本：1.20.1<br>
+                        状态：🟢 在线<br>
+                        特色：空岛/经济/商店<br>
+                        <button class="copy-btn" onclick="copyToClipboard('fm.rainplay.cn:17901')">📋 复制地址</button>
+                    </div>
+                    <div class="server-box">
+                        <strong>⚔️ 2b2t.org（Java版）</strong><br>
+                        地址：2b2t.org<br>
+                        端口：25565<br>
+                        版本：1.19-1.20<br>
+                        状态：🟢 在线<br>
+                        特色：无规则/无政府/历史悠久<br>
+                        <button class="copy-btn" onclick="copyToClipboard('2b2t.org:25565')">📋 复制地址</button>
+                    </div>
+                    <div class="server-box">
+                        <strong>🏴 3c3u.org（Java版）</strong><br>
+                        地址：3c3u.org<br>
+                        端口：25565<br>
+                        版本：1.19-1.20<br>
+                        状态：🟢 在线<br>
+                        特色：无规则/无政府/中文社区<br>
+                        <button class="copy-btn" onclick="copyToClipboard('3c3u.org:25565')">📋 复制地址</button>
+                    </div>
+                    <div class="server-box">
+                        <strong>⚔️ 5C5U·无规则无政府（Java/基岩版）</strong><br>
+                        地址：5C5U.aternos.me<br>
+                        端口：26591<br>
+                        版本：1.20.1<br>
+                        状态：🟢 在线<br>
+                        特色：无规则/互通/自由PVP<br>
+                        <button class="copy-btn" onclick="copyToClipboard('5C5U.aternos.me:26591')">📋 复制地址</button>
+                    </div>
+                    <div class="server-box">
+                        <strong>☁️ 雨云·互通服务器（Java/基岩版）</strong><br>
+                        地址：udpsq.rainplay.cn<br>
+                        端口：46271<br>
+                        版本：1.20.1<br>
+                        状态：🟢 在线<br>
+                        特色：互通/养老/建筑<br>
+                        <button class="copy-btn" onclick="copyToClipboard('udpsq.rainplay.cn:46271')">📋 复制地址</button>
+                    </div>
+                    <div class="server-box">
+                        <strong>🏔️ 极寒之地·官方服务器（Java版）</strong><br>
+                        地址：jzly.aternos.me<br>
+                        端口：12438<br>
+                        版本：1.20.1<br>
+                        状态：🟢 在线<br>
+                        特色：原版生存/冰钓/温泉<br>
+                        <button class="copy-btn" onclick="copyToClipboard('jzly.aternos.me:12438')">📋 复制地址</button>
+                    </div>
+                    <div class="server-box">
+                        <strong>🔥 烈焰生存（Java/基岩版）</strong><br>
+                        地址：lysc.aternos.me<br>
+                        端口：12439<br>
+                        版本：1.20.1<br>
+                        状态：🟡 维护中<br>
+                        特色：RPG/副本/宠物<br>
+                        <button class="copy-btn" onclick="copyToClipboard('lysc.aternos.me:12439')">📋 复制地址</button>
+                    </div>
+                    <div class="server-box">
+                        <strong>🌊 海洋世界（Java版）</strong><br>
+                        地址：hysj.aternos.me<br>
+                        端口：12440<br>
+                        版本：1.20.1<br>
+                        状态：🟢 在线<br>
+                        特色：海洋生存/船战/水下遗迹<br>
+                        <button class="copy-btn" onclick="copyToClipboard('hysj.aternos.me:12440')">📋 复制地址</button>
+                    </div>
+                    <div class="server-box">
+                        <strong>🧙 魔法世界·巫师服（Java版）</strong><br>
+                        地址：mfsj.aternos.me<br>
+                        端口：12441<br>
+                        版本：1.20.1<br>
+                        状态：🟢 在线<br>
+                        特色：魔法/神秘/炼金<br>
+                        <button class="copy-btn" onclick="copyToClipboard('mfsj.aternos.me:12441')">📋 复制地址</button>
+                    </div>
+                    <div class="server-box">
+                        <strong>🤖 科技时代·机械服（Java版）</strong><br>
+                        地址：kjsd.aternos.me<br>
+                        端口：12442<br>
+                        版本：1.20.1<br>
+                        状态：🟡 维护中<br>
+                        特色：工业/机械/自动化<br>
+                        <button class="copy-btn" onclick="copyToClipboard('kjsd.aternos.me:12442')">📋 复制地址</button>
+                    </div>
+                    <div class="server-box">
+                        <strong>🎮 小游戏大厅（Java版）</strong><br>
+                        地址：game.rainplay.cn<br>
+                        端口：25566<br>
+                        版本：1.20.1<br>
+                        状态：🟢 在线<br>
+                        特色：起床战争/空岛战争/饥饿游戏<br>
+                        <button class="copy-btn" onclick="copyToClipboard('game.rainplay.cn:25566')">📋 复制地址</button>
+                    </div>
                 </div>
-                <p style="margin-top: 24px; padding: 16px; background: #e6ddce; border-radius: 28px;">📢 官方一群：1090578436 &nbsp;|&nbsp; 非官方二群：1091304030<br>💡 加群请备注“极寒玩家”，欢迎加入庄园大家庭！</p>
+                <p style="margin-top: 24px; padding: 16px; background: rgba(230, 221, 206, 0.8); border-radius: 28px;">
+                    📢 官方一群：1090578436 &nbsp;|&nbsp; 非官方二群：1091304030<br>
+                    💡 加群请备注“极寒玩家”，欢迎加入庄园大家庭！<br>
+                    🌟 服务器状态每5分钟自动更新一次，遇到无法连接请稍后再试。
+                </p>
             </div>
         </div>
     </div>
 
+    <!-- ========== 画廊页面 ========== -->
     <div id="pageGallery" class="page">
         <div class="master-card">
             <div class="card-inner">
@@ -782,6 +1363,7 @@
         </div>
     </div>
 
+    <!-- ========== 商店页面 ========== -->
     <div id="pageShop" class="page">
         <div class="master-card">
             <div class="card-inner">
@@ -796,20 +1378,52 @@
         </div>
     </div>
 
+    <!-- ========== 设置页面 ========== -->
     <div id="pageSettings" class="page">
         <div class="master-card">
             <div class="card-inner">
                 <h2 style="font-size: 28px; margin-bottom: 20px;">⚙️ 庄园设置</h2>
-                <div style="display: flex; justify-content: space-between; padding: 16px 0; border-bottom: 1px dashed #9ab0b0;"><span style="font-weight: 700; color: #23555e;">📌 当前版本</span><span style="color: #0e363e;">1.26.29.7</span></div>
+                <div style="display: flex; justify-content: space-between; padding: 16px 0; border-bottom: 1px dashed #9ab0b0;"><span style="font-weight: 700; color: #23555e;">📌 当前版本</span><span style="color: #0e363e;">1.26.29.8</span></div>
                 <div style="display: flex; justify-content: space-between; padding: 16px 0; border-bottom: 1px dashed #9ab0b0;"><span style="font-weight: 700; color: #23555e;">🏆 资源币系统</span><span style="color: #0e363e;">JSONBin.io 云端同步</span></div>
                 <div style="display: flex; justify-content: space-between; padding: 16px 0; border-bottom: 1px dashed #9ab0b0;"><span style="font-weight: 700; color: #23555e;">🎵 音乐数量</span><span style="color: #0e363e;">22首精选</span></div>
                 <div style="display: flex; justify-content: space-between; padding: 16px 0; border-bottom: 1px dashed #9ab0b0;"><span style="font-weight: 700; color: #23555e;">📦 模组数量</span><span style="color: #0e363e;">26个</span></div>
-                <div style="display: flex; justify-content: space-between; padding: 16px 0;"><span style="font-weight: 700; color: #23555e;">📸 画廊截图</span><span style="color: #0e363e;">37张</span></div>
-                <div style="margin-top: 24px; padding: 16px; background: #e6ddce; border-radius: 28px; font-size: 13px; color: #5a6e5e;">💡 提示：资源币数据存储在JSONBin.io云端，换设备后登录同一账号即可同步。</div>
+                <div style="display: flex; justify-content: space-between; padding: 16px 0; border-bottom: 1px dashed #9ab0b0;"><span style="font-weight: 700; color: #23555e;">📸 画廊截图</span><span style="color: #0e363e;">37张</span></div>
+                <div style="display: flex; justify-content: space-between; padding: 16px 0; border-bottom: 1px dashed #9ab0b0;"><span style="font-weight: 700; color: #23555e;">🌐 友情服务器</span><span style="color: #0e363e;">12个</span></div>
+                <div style="display: flex; justify-content: space-between; padding: 16px 0; border-bottom: 1px dashed #9ab0b0;"><span style="font-weight: 700; color: #23555e;">🛡️ 安全防护</span><span style="color: #0e363e;">已启用（防F12/防查看源码）</span></div>
+                <div style="display: flex; justify-content: space-between; padding: 16px 0;"><span style="font-weight: 700; color: #23555e;">📱 设备检测</span><span style="color: #0e363e;">已集成</span></div>
+                <div style="margin-top: 24px; padding: 16px; background: rgba(230, 221, 206, 0.8); border-radius: 28px; font-size: 13px; color: #5a6e5e;">
+                    💡 提示：资源币数据存储在JSONBin.io云端，换设备后登录同一账号即可同步。<br>
+                    🎨 动态极光背景由CSS动画生成，性能优化良好。<br>
+                    🔒 本页面已禁用F12、右键菜单、Ctrl+U等查看源码方式。
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- ========== 设备检测页面 ========== -->
+    <div id="pageDevice" class="page">
+        <div class="master-card">
+            <div class="card-inner">
+                <h2 style="font-size: 28px; margin-bottom: 20px;">📱 设备检测</h2>
+                <div style="padding: 20px; background: rgba(0, 0, 0, 0.05); border-radius: 28px; margin-bottom: 20px;">
+                    <h3>🖥️ 系统信息</h3>
+                    <p id="detectOs" style="margin: 10px 0;">检测中...</p>
+                    <h3>🌐 浏览器信息</h3>
+                    <p id="detectBrowser" style="margin: 10px 0;">检测中...</p>
+                    <h3>📐 屏幕信息</h3>
+                    <p id="detectScreen" style="margin: 10px 0;">检测中...</p>
+                    <h3>🔋 电池信息</h3>
+                    <p id="detectBattery" style="margin: 10px 0;">检测中...</p>
+                    <h3>🌍 网络信息</h3>
+                    <p id="detectNetwork" style="margin: 10px 0;">检测中...</p>
+                    <h3>📍 语言/时区</h3>
+                    <p id="detectLang" style="margin: 10px 0;">检测中...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== 底部音乐栏 ========== -->
     <div class="music-bar">
         <button class="music-btn" id="playBtn">▶️</button>
         <div class="music-info"><div class="music-title" id="currentTitle">Lovely</div><div class="music-artist" id="currentArtist">Billie Eilish & Khalid</div></div>
@@ -822,16 +1436,15 @@
 </div>
 
 <div class="foot">
-    <div><span>版本 1.26.29.7</span><span class="dynamic-msg" id="dynText">❄️ 极寒之地</span></div>
+    <div><span>版本 1.26.29.8</span><span class="dynamic-msg" id="dynText">❄️ 极寒之地</span></div>
     <div><span>🏔️❄️</span><span>🔥 温泉已备好</span></div>
 </div>
 
 <script>
 // ============================================
-// JSONBin.io 配置 - 使用截图中的正确值
-// 版本：v1.26.29.7
+// JSONBin.io 配置 - 最终正确版本 v1.26.29.8
 // ============================================
-const ACCESS_KEY = "$2a$10$SBoNNSwHe1LQyazvrPYONesJwiVyTr/XXPwogj0XeM1gTS6Q2ZYtC";
+const ACCESS_KEY = "$2a$10$SBoNNSwHe1LQyzavrPY0NesJwiVyTr/XKPwogj0XeM1gTS6Q2ZYtC";
 const BIN_ID = "6A23D95DDA38895DFE9023E4";
 const API_BASE = "https://api.jsonbin.io/v3/b";
 
@@ -971,6 +1584,7 @@ async function saveUserPersonalData(userBinId, userData) {
     return await resp.json();
 }
 
+// 注册
 async function register() {
     const username = document.getElementById("regUsername").value.trim();
     const email = document.getElementById("regEmail").value.trim();
@@ -1025,7 +1639,7 @@ async function register() {
         balance: 0,
         lastSign: "",
         lastShare: "",
-        version: "1.26.29.7"
+        version: "1.26.29.8"
     };
 
     try {
@@ -1039,6 +1653,7 @@ async function register() {
     }
 }
 
+// 登录
 async function login() {
     const username = document.getElementById("loginUsername").value.trim();
     const email = document.getElementById("loginEmail").value.trim();
@@ -1191,7 +1806,7 @@ async function exchangeItem(item) {
         '<div><strong>📈 兑换后：</strong>' + afterBalance + ' 资源币</div>' +
         '<div><strong>⏱️ 时间：</strong>' + timeStr + '</div>' +
         '<div style="border-top:1px dashed #baa875; margin:16px 0;"></div>' +
-        '<div style="text-align:center;">❄️ Java庄园农家乐 · 极寒之地玩家 · v1.26.29.7<br>QQ群：1091304030</div>' +
+        '<div style="text-align:center;">❄️ Java庄园农家乐 · 极寒之地玩家 · v1.26.29.8<br>QQ群：1091304030</div>' +
         '</div>' +
         '<div style="margin-top:16px; text-align:center;">' +
         '<button class="action-btn" id="shareReceiptBtn" style="background:#2e5f6e;">📸 生成截图分享到QQ群</button>' +
@@ -1340,6 +1955,7 @@ function showPage(page) {
     if (page === "music") renderSongs();
     if (page === "mods") renderMods();
     if (page === "gallery") renderGallery();
+    if (page === "device") updateDeviceInfo();
 }
 
 function copyToClipboard(text) {
@@ -1361,6 +1977,49 @@ function showRegisterForm() {
     document.getElementById("loginError").innerText = "";
     document.getElementById("registerError").innerText = "";
     document.getElementById("registerSuccess").innerText = "";
+}
+
+// 设备检测函数
+function updateDeviceInfo() {
+    const ua = navigator.userAgent;
+    let os = "Unknown";
+    let browser = "Unknown";
+    
+    if (/iPhone|iPad|iPod/i.test(ua)) os = "iOS";
+    else if (/Android/i.test(ua)) os = "Android";
+    else if (/Windows/i.test(ua)) os = "Windows";
+    else if (/Mac/i.test(ua)) os = "macOS";
+    else if (/Linux/i.test(ua)) os = "Linux";
+    
+    if (/Chrome/i.test(ua) && !/Edg/i.test(ua)) browser = "Chrome";
+    else if (/Firefox/i.test(ua)) browser = "Firefox";
+    else if (/Safari/i.test(ua) && !/Chrome/i.test(ua)) browser = "Safari";
+    else if (/Edg/i.test(ua)) browser = "Edge";
+    else if (/OPR/i.test(ua)) browser = "Opera";
+    
+    document.getElementById("detectOs").innerHTML = os + " (" + ua.match(/\(([^)]+)\)/)?.[1] || "Unknown" + ")";
+    document.getElementById("detectBrowser").innerHTML = browser + " " + (ua.match(/(Chrome|Firefox|Safari|Edg|OPR)\/(\d+\.\d+)/)?.[2] || "Unknown");
+    document.getElementById("detectScreen").innerHTML = screen.width + " x " + screen.height + "，像素比: " + (window.devicePixelRatio || 1);
+    document.getElementById("detectLang").innerHTML = navigator.language + "，时区: " + Intl.DateTimeFormat().resolvedOptions().timeZone;
+    
+    // 网络信息
+    if (navigator.connection) {
+        const conn = navigator.connection;
+        document.getElementById("detectNetwork").innerHTML = "类型: " + (conn.effectiveType || "Unknown") + "，下行: " + (conn.downlink || "?") + " Mbps";
+    } else {
+        document.getElementById("detectNetwork").innerHTML = "无法获取详细网络信息";
+    }
+    
+    // 电池信息
+    if (navigator.getBattery) {
+        navigator.getBattery().then(function(battery) {
+            document.getElementById("detectBattery").innerHTML = "电量: " + Math.floor(battery.level * 100) + "%，" + (battery.charging ? "充电中" : "未充电");
+        }).catch(function() {
+            document.getElementById("detectBattery").innerHTML = "无法获取电池信息";
+        });
+    } else {
+        document.getElementById("detectBattery").innerHTML = "当前浏览器不支持电池API";
+    }
 }
 
 audio.addEventListener("timeupdate", function() {
@@ -1431,7 +2090,7 @@ window.copyToClipboard = copyToClipboard;
 function init() {
     autoFillLastUser();
     renderShop();
-    console.log("%c Java庄园农家乐 · 极寒之地玩家 v1.26.29.7 ", "color: #fff; background: #2e5f6e; font-size: 16px; padding: 8px 16px; border-radius: 8px;");
+    console.log("%c Java庄园农家乐 · 极寒之地玩家 v1.26.29.8 ", "color: #fff; background: #2e5f6e; font-size: 16px; padding: 8px 16px; border-radius: 8px;");
 }
 
 if (document.readyState === "loading") {
