@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Java庄园农家乐 · 极寒之地玩家 · v1.26.29.8</title>
+    <title>Java庄园农家乐 · 极寒之地玩家 · v1.26.29.9</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <style>
         /* ============================================ */
-        /* 动态效果 - 极光背景动画                    */
-        /* 版本：v1.26.29.8                            */
+        /* 液态玻璃 + 毛玻璃效果 - 动态主题             */
+        /* 版本：v1.26.29.9                            */
         /* ============================================ */
         * {
             margin: 0;
@@ -18,7 +18,7 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* 动态极光背景 */
+        /* 动态液态玻璃背景 */
         body {
             min-height: 100vh;
             font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans SC', sans-serif;
@@ -27,115 +27,134 @@
             align-items: center;
             justify-content: center;
             position: relative;
-            background: #0a1620;
+            background: radial-gradient(circle at 20% 30%, #0a1620, #06121a);
             overflow-x: hidden;
         }
 
+        /* 液态玻璃动态光晕层1 */
         body::before {
             content: '';
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(125deg, 
-                #0f2b3d 0%, 
-                #1a3a4a 20%, 
-                #0e2a38 40%, 
-                #1c4a5a 60%, 
-                #0f2b3d 80%, 
-                #1a3a4a 100%);
-            background-size: 400% 400%;
-            animation: aurora 15s ease infinite;
-            z-index: -2;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 40%, rgba(100, 200, 255, 0.15), rgba(50, 100, 150, 0.05), transparent 70%);
+            animation: liquidWave1 12s ease-in-out infinite;
+            z-index: -3;
+            pointer-events: none;
         }
 
-        @keyframes aurora {
-            0% { background-position: 0% 50%; opacity: 0.8; }
-            25% { background-position: 50% 100%; opacity: 1; }
-            50% { background-position: 100% 50%; opacity: 0.9; }
-            75% { background-position: 50% 0%; opacity: 1; }
-            100% { background-position: 0% 50%; opacity: 0.8; }
+        @keyframes liquidWave1 {
+            0% { transform: translate(0%, 0%) rotate(0deg); opacity: 0.6; }
+            25% { transform: translate(5%, 3%) rotate(2deg); opacity: 0.8; }
+            50% { transform: translate(-3%, 5%) rotate(-1deg); opacity: 0.6; }
+            75% { transform: translate(3%, -2%) rotate(1deg); opacity: 0.7; }
+            100% { transform: translate(0%, 0%) rotate(0deg); opacity: 0.6; }
         }
 
-        /* 动态雪花/粒子效果 */
+        /* 液态玻璃动态光晕层2 */
         body::after {
             content: '';
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: 
-                radial-gradient(2px 2px at 10% 20%, rgba(255,255,255,0.3) 100%, transparent),
-                radial-gradient(1px 1px at 30% 50%, rgba(255,255,255,0.2) 100%, transparent),
-                radial-gradient(3px 3px at 70% 80%, rgba(255,255,255,0.15) 100%, transparent),
-                radial-gradient(2px 2px at 85% 30%, rgba(255,255,255,0.25) 100%, transparent),
-                radial-gradient(1px 1px at 45% 90%, rgba(255,255,255,0.2) 100%, transparent);
-            background-repeat: no-repeat;
-            animation: snowFloat 20s linear infinite;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(ellipse at 60% 70%, rgba(255, 200, 100, 0.1), rgba(150, 100, 50, 0.03), transparent 60%);
+            animation: liquidWave2 15s ease-in-out infinite reverse;
+            z-index: -3;
             pointer-events: none;
-            z-index: -1;
         }
 
-        @keyframes snowFloat {
-            0% { background-position: 10% 0%, 30% 0%, 70% 0%, 85% 0%, 45% 0%; }
-            100% { background-position: 10% 100%, 30% 100%, 70% 100%, 85% 100%, 45% 100%; background-size: 100px 100px, 80px 80px, 120px 120px, 90px 90px, 110px 110px; }
+        @keyframes liquidWave2 {
+            0% { transform: translate(0%, 0%) rotate(0deg); opacity: 0.4; }
+            33% { transform: translate(-4%, 2%) rotate(-2deg); opacity: 0.6; }
+            66% { transform: translate(2%, -3%) rotate(1deg); opacity: 0.4; }
+            100% { transform: translate(0%, 0%) rotate(0deg); opacity: 0.4; }
         }
 
-        /* 登录/注册容器 - 毛玻璃动态效果 */
+        /* 雪花粒子效果 */
+        .snow-particle {
+            position: fixed;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: -2;
+            backdrop-filter: blur(2px);
+        }
+
+        /* 登录/注册容器 - 液态毛玻璃 */
         .auth-wrapper {
             width: 100%;
             max-width: 500px;
-            animation: fadeInUp 0.6s ease-out;
+            animation: glassFadeIn 0.8s cubic-bezier(0.2, 0.9, 0.4, 1.1);
         }
 
-        @keyframes fadeInUp {
+        @keyframes glassFadeIn {
             from {
                 opacity: 0;
-                transform: translateY(30px);
+                transform: translateY(40px) scale(0.96);
+                backdrop-filter: blur(0px);
             }
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateY(0) scale(1);
+                backdrop-filter: blur(10px);
             }
         }
 
         .auth-container {
-            background: rgba(252, 247, 238, 0.92);
+            background: rgba(252, 247, 238, 0.18);
             backdrop-filter: blur(20px);
             border-radius: 56px;
             padding: 48px 40px;
-            box-shadow: 0 30px 45px -12px rgba(0, 0, 0, 0.5), 0 0 0 2px rgba(126, 175, 197, 0.5), 0 0 30px rgba(100, 200, 255, 0.2);
-            transition: all 0.3s ease;
+            box-shadow: 0 30px 50px -20px rgba(0, 0, 0, 0.5), 
+                        0 0 0 1px rgba(255, 255, 255, 0.2) inset,
+                        0 0 30px rgba(100, 200, 255, 0.15);
+            transition: all 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         .auth-container:hover {
             transform: translateY(-5px);
-            box-shadow: 0 40px 55px -15px rgba(0, 0, 0, 0.6), 0 0 0 2px rgba(126, 175, 197, 0.8), 0 0 40px rgba(100, 200, 255, 0.4);
+            background: rgba(252, 247, 238, 0.22);
+            box-shadow: 0 40px 60px -25px rgba(0, 0, 0, 0.6), 
+                        0 0 0 1px rgba(255, 255, 255, 0.3) inset,
+                        0 0 40px rgba(100, 200, 255, 0.25);
         }
 
         .auth-title {
             font-size: 32px;
             font-weight: 800;
-            color: #1a3a28;
+            color: rgba(255, 255, 255, 0.95);
             text-align: center;
             margin-bottom: 36px;
-            text-shadow: 2px 2px 0 #ede1c2;
-            animation: pulse 2s infinite;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #fff, #d4e8e0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: none;
+            animation: titleGlow 3s ease-in-out infinite;
         }
 
-        @keyframes pulse {
-            0%, 100% { text-shadow: 2px 2px 0 #ede1c2; }
-            50% { text-shadow: 3px 3px 0 #ffd700; }
+        @keyframes titleGlow {
+            0%, 100% { filter: drop-shadow(0 0 5px rgba(100, 200, 255, 0.3)); }
+            50% { filter: drop-shadow(0 0 15px rgba(100, 200, 255, 0.6)); }
         }
 
         .auth-title small {
             font-size: 13px;
             font-weight: 500;
-            color: #5a7a7e;
+            color: rgba(255, 255, 255, 0.7);
             display: block;
             margin-top: 8px;
+            background: none;
+            -webkit-background-clip: unset;
+            background-clip: unset;
+            color: rgba(255, 255, 255, 0.7);
         }
 
         .auth-input-group {
@@ -144,34 +163,41 @@
 
         .auth-input-group label {
             display: block;
-            font-weight: 700;
-            color: #23555e;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.85);
             margin-bottom: 8px;
             font-size: 14px;
+            letter-spacing: 1px;
         }
 
         .auth-input {
             width: 100%;
             padding: 14px 18px;
-            border: 2px solid rgba(196, 213, 216, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.25);
             border-radius: 40px;
             font-size: 16px;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.12);
+            color: white;
             transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
         }
 
         .auth-input:focus {
             outline: none;
-            border-color: #2e5f6e;
-            box-shadow: 0 0 0 3px rgba(46, 95, 110, 0.2);
-            background: white;
+            border-color: rgba(100, 200, 255, 0.6);
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 0 3px rgba(100, 200, 255, 0.15);
             transform: scale(1.01);
+        }
+
+        .auth-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
         }
 
         .auth-btn {
             width: 100%;
-            background: linear-gradient(135deg, #2e5f6e, #1a3f4e);
-            border: none;
+            background: linear-gradient(135deg, rgba(46, 95, 110, 0.8), rgba(26, 63, 78, 0.8));
+            border: 1px solid rgba(255, 255, 255, 0.25);
             color: white;
             padding: 14px 20px;
             border-radius: 40px;
@@ -181,6 +207,7 @@
             margin-top: 16px;
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
             position: relative;
             overflow: hidden;
         }
@@ -193,7 +220,7 @@
             width: 0;
             height: 0;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.2);
             transform: translate(-50%, -50%);
             transition: width 0.6s, height 0.6s;
         }
@@ -206,7 +233,8 @@
         .auth-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-            background: linear-gradient(135deg, #1a4a5a, #0e2a38);
+            background: linear-gradient(135deg, rgba(46, 95, 110, 0.9), rgba(26, 63, 78, 0.9));
+            border-color: rgba(255, 255, 255, 0.4);
         }
 
         .auth-btn:active {
@@ -216,24 +244,25 @@
         .auth-switch {
             text-align: center;
             margin-top: 24px;
-            color: #5a7a7e;
+            color: rgba(255, 255, 255, 0.7);
             font-size: 14px;
         }
 
         .auth-switch a {
-            color: #2e5f6e;
+            color: rgba(100, 200, 255, 0.9);
             font-weight: 700;
             text-decoration: none;
             cursor: pointer;
-            transition: color 0.3s;
+            transition: all 0.3s;
         }
 
         .auth-switch a:hover {
-            color: #ff8c00;
+            color: rgba(255, 200, 100, 0.9);
+            text-shadow: 0 0 8px rgba(255, 200, 100, 0.5);
         }
 
         .error-msg {
-            color: #d94f4f;
+            color: rgba(255, 100, 100, 0.9);
             font-size: 13px;
             margin-top: 12px;
             text-align: center;
@@ -247,42 +276,42 @@
         }
 
         .success-msg {
-            color: #5fbb68;
+            color: rgba(100, 200, 100, 0.9);
             font-size: 13px;
             margin-top: 12px;
             text-align: center;
-            animation: fadeIn 0.5s;
+            animation: fadeInScale 0.5s;
         }
 
-        @keyframes fadeIn {
+        @keyframes fadeInScale {
             from { opacity: 0; transform: scale(0.9); }
             to { opacity: 1; transform: scale(1); }
         }
 
-        /* 主内容样式 - 动态 */
+        /* 主内容样式 */
         .main-content {
             display: none;
             width: 100%;
             max-width: 1200px;
-            animation: fadeIn 0.8s ease-out;
+            animation: glassFadeIn 0.8s ease-out;
         }
 
         .main-content.show {
             display: block;
         }
 
-        /* 导航栏 - 动态毛玻璃 */
+        /* 导航栏 - 液态毛玻璃 */
         .navbar {
-            background: rgba(252, 247, 238, 0.92);
-            backdrop-filter: blur(16px);
+            background: rgba(252, 247, 238, 0.12);
+            backdrop-filter: blur(20px);
             border-radius: 60px;
             padding: 16px 28px;
             display: flex;
             gap: 12px;
             flex-wrap: wrap;
             justify-content: center;
-            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(207, 226, 232, 0.6);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             margin-bottom: 24px;
             animation: slideDown 0.5s ease;
         }
@@ -299,39 +328,39 @@
         }
 
         .nav-btn {
-            background: linear-gradient(135deg, #d9e7ea, #c8dce0);
-            border: none;
+            background: rgba(217, 231, 234, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             padding: 10px 22px;
             border-radius: 50px;
             font-weight: 700;
             font-size: 14px;
-            color: #1a3a44;
+            color: rgba(255, 255, 255, 0.9);
             cursor: pointer;
             transition: all 0.3s ease;
-            border: 1px solid rgba(188, 208, 212, 0.6);
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
         }
 
         .nav-btn:hover {
-            background: linear-gradient(135deg, #c8dce0, #b8ccd0);
+            background: rgba(200, 220, 224, 0.25);
             transform: translateY(-3px);
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            border-color: rgba(255, 255, 255, 0.4);
         }
 
         .nav-btn.active {
-            background: linear-gradient(135deg, #2e5f6e, #1a3f4e);
-            color: #fef3e2;
-            box-shadow: 0 4px 12px rgba(46, 95, 110, 0.4);
+            background: linear-gradient(135deg, rgba(46, 95, 110, 0.7), rgba(26, 63, 78, 0.7));
+            color: white;
+            border-color: rgba(100, 200, 255, 0.5);
+            box-shadow: 0 4px 12px rgba(46, 95, 110, 0.3);
         }
 
         .logout-btn {
-            background: linear-gradient(135deg, #d94f4f, #c43e3e);
+            background: rgba(217, 79, 79, 0.6);
             color: white;
-            box-shadow: 0 3px 6px rgba(185, 58, 58, 0.3);
         }
 
         .logout-btn:hover {
-            background: linear-gradient(135deg, #c43e3e, #b32e2e);
+            background: rgba(196, 62, 62, 0.8);
         }
 
         /* 页面容器 */
@@ -349,33 +378,33 @@
             display: block;
         }
 
-        /* 卡片样式 - 动态悬浮 */
+        /* 卡片样式 - 液态毛玻璃 */
         .master-card {
-            background: rgba(252, 247, 238, 0.94);
-            backdrop-filter: blur(16px);
+            background: rgba(252, 247, 238, 0.1);
+            backdrop-filter: blur(20px);
             border-radius: 56px;
-            box-shadow: 0 30px 45px -12px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 30px 45px -12px rgba(0, 0, 0, 0.3);
             overflow: hidden;
             margin-bottom: 28px;
             transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-            border: 1px solid rgba(126, 175, 197, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .master-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 40px 60px -15px rgba(0, 0, 0, 0.5);
-            border-color: rgba(126, 175, 197, 0.6);
+            transform: translateY(-5px);
+            background: rgba(252, 247, 238, 0.15);
+            box-shadow: 0 40px 60px -15px rgba(0, 0, 0, 0.4);
+            border-color: rgba(255, 255, 255, 0.3);
         }
 
         .card-inner {
             padding: 34px 36px 42px;
         }
 
-        /* 资源币头部 - 动态渐变 */
+        /* 资源币头部 - 液态玻璃渐变 */
         .balance-card {
-            background: linear-gradient(135deg, #236653, #0e4a3c);
-            background-size: 200% 200%;
-            animation: gradientShift 4s ease infinite;
+            background: linear-gradient(135deg, rgba(35, 102, 83, 0.7), rgba(14, 74, 60, 0.7));
+            backdrop-filter: blur(10px);
             border-radius: 48px;
             padding: 28px 36px;
             display: flex;
@@ -383,14 +412,15 @@
             align-items: center;
             color: white;
             margin-bottom: 28px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             transition: all 0.3s;
+            animation: balanceGlow 3s ease-in-out infinite;
         }
 
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        @keyframes balanceGlow {
+            0%, 100% { box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15), 0 0 0 0 rgba(100, 200, 255, 0); }
+            50% { box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), 0 0 20px 5px rgba(100, 200, 255, 0.2); }
         }
 
         .balance-card:hover {
@@ -401,18 +431,19 @@
             font-size: 22px;
             font-weight: 700;
             letter-spacing: 2px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
 
         .balance-value {
             font-size: 52px;
             font-weight: 900;
-            text-shadow: 2px 2px 0 #4f3a1a;
-            animation: balancePulse 2s infinite;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            animation: valuePulse 2s infinite;
         }
 
-        @keyframes balancePulse {
-            0%, 100% { text-shadow: 2px 2px 0 #4f3a1a; }
-            50% { text-shadow: 3px 3px 0 #ffa500; }
+        @keyframes valuePulse {
+            0%, 100% { text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); }
+            50% { text-shadow: 0 2px 20px rgba(255, 215, 0, 0.5); }
         }
 
         /* 签到分享按钮组 */
@@ -424,8 +455,8 @@
         }
 
         .action-btn {
-            background: linear-gradient(135deg, #2e5f6e, #1a404e);
-            border: none;
+            background: rgba(46, 95, 110, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             color: white;
             padding: 12px 28px;
             border-radius: 50px;
@@ -436,13 +467,13 @@
             align-items: center;
             gap: 10px;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(5px);
         }
 
         .action-btn:hover {
             transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-            background: linear-gradient(135deg, #1a4a5a, #0e2a38);
+            background: rgba(46, 95, 110, 0.8);
+            border-color: rgba(255, 255, 255, 0.4);
         }
 
         .action-btn:active {
@@ -454,34 +485,36 @@
             display: flex;
             gap: 24px;
             margin-bottom: 32px;
-            background: rgba(230, 221, 206, 0.7);
+            background: rgba(230, 221, 206, 0.15);
+            backdrop-filter: blur(10px);
             border-radius: 80px;
             padding: 8px;
             width: fit-content;
+            border: 1px solid rgba(255, 255, 255, 0.15);
         }
 
         .shop-tab {
-            background: #cfc2a8;
+            background: rgba(207, 194, 168, 0.2);
             border: none;
             padding: 12px 32px;
             border-radius: 60px;
             font-weight: 800;
             font-size: 16px;
-            color: #2c423c;
+            color: rgba(255, 255, 255, 0.9);
             cursor: pointer;
             transition: all 0.3s;
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
         }
 
         .shop-tab:hover {
             transform: translateY(-2px);
-            background: #b8a888;
+            background: rgba(207, 194, 168, 0.35);
         }
 
         .shop-tab.active {
-            background: linear-gradient(135deg, #2e5f6e, #163c46);
-            color: #fef3da;
-            box-shadow: 0 4px 12px rgba(46, 95, 110, 0.4);
+            background: linear-gradient(135deg, rgba(46, 95, 110, 0.8), rgba(22, 60, 70, 0.8));
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         /* 商品网格 */
@@ -493,20 +526,22 @@
         }
 
         .item-card {
-            background: rgba(255, 254, 248, 0.95);
+            background: rgba(255, 254, 248, 0.12);
+            backdrop-filter: blur(10px);
             border-radius: 36px;
             padding: 22px 18px;
             text-align: center;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            border: 1px solid #ecdbaa;
+            border: 1px solid rgba(255, 255, 255, 0.2);
             transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
             cursor: pointer;
         }
 
         .item-card:hover {
             transform: translateY(-8px) scale(1.02);
+            background: rgba(255, 254, 248, 0.2);
             box-shadow: 0 20px 35px rgba(0, 0, 0, 0.2);
-            border-color: #ffd700;
+            border-color: rgba(255, 215, 0, 0.5);
         }
 
         .item-emoji {
@@ -522,14 +557,14 @@
         .item-name {
             font-weight: 800;
             font-size: 20px;
-            color: #1b4b3c;
+            color: rgba(255, 255, 255, 0.95);
             margin-bottom: 6px;
         }
 
         .item-amount {
             font-size: 14px;
-            color: #5b7f75;
-            background: #eef3e8;
+            color: rgba(255, 255, 255, 0.7);
+            background: rgba(46, 95, 110, 0.3);
             display: inline-block;
             padding: 4px 16px;
             border-radius: 30px;
@@ -537,28 +572,28 @@
         }
 
         .item-price {
-            background: rgba(46, 95, 110, 0.15);
+            background: rgba(46, 95, 110, 0.25);
             display: inline-block;
             padding: 6px 20px;
             border-radius: 40px;
             font-weight: 800;
-            color: #1e5e55;
+            color: rgba(255, 215, 0, 0.9);
             margin: 12px 0;
             font-size: 18px;
         }
 
         .item-desc {
             font-size: 12px;
-            color: #6b8a6e;
+            color: rgba(255, 255, 255, 0.6);
             margin: 8px 0;
             padding: 8px;
-            background: rgba(247, 242, 226, 0.8);
+            background: rgba(0, 0, 0, 0.2);
             border-radius: 24px;
         }
 
         .exchange-btn {
-            background: linear-gradient(135deg, #f7931a, #e07d0a);
-            border: none;
+            background: linear-gradient(135deg, rgba(247, 147, 26, 0.8), rgba(224, 125, 10, 0.8));
+            border: 1px solid rgba(255, 255, 255, 0.2);
             color: white;
             padding: 10px 16px;
             border-radius: 40px;
@@ -567,105 +602,114 @@
             cursor: pointer;
             width: 100%;
             transition: all 0.3s;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         }
 
         .exchange-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-            background: linear-gradient(135deg, #e07d0a, #c86a00);
+            background: linear-gradient(135deg, rgba(247, 147, 26, 0.9), rgba(224, 125, 10, 0.9));
         }
 
         /* 账单区域 */
         .bill-area {
-            background: rgba(241, 235, 218, 0.8);
+            background: rgba(241, 235, 218, 0.15);
+            backdrop-filter: blur(10px);
             border-radius: 40px;
             padding: 24px;
             margin-top: 36px;
-            border: 2px dashed #c7b27e;
+            border: 1px dashed rgba(199, 178, 126, 0.5);
             transition: all 0.3s;
         }
 
         .bill-area:hover {
-            background: rgba(241, 235, 218, 0.95);
-            border-color: #ffd700;
+            background: rgba(241, 235, 218, 0.22);
+            border-color: rgba(199, 178, 126, 0.8);
         }
 
         .bill-area h3 {
             font-size: 22px;
             text-align: center;
             margin-bottom: 20px;
-            color: #2c554b;
+            color: rgba(255, 255, 255, 0.9);
         }
 
         .receipt-paper {
-            background: #fffef7;
+            background: rgba(255, 254, 247, 0.15);
+            backdrop-filter: blur(5px);
             border-radius: 28px;
             padding: 24px;
             font-family: monospace;
+            color: rgba(255, 255, 255, 0.8);
             transition: all 0.3s;
         }
 
         .receipt-paper:hover {
+            background: rgba(255, 254, 247, 0.22);
             transform: scale(1.01);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
         .empty-bill {
             text-align: center;
             padding: 40px;
-            color: #9b8a64;
+            color: rgba(155, 138, 100, 0.8);
         }
 
         /* 首页样式 */
         .info-box {
-            background: rgba(217, 207, 187, 0.7);
+            background: rgba(217, 207, 187, 0.15);
+            backdrop-filter: blur(10px);
             border-radius: 40px;
             padding: 24px;
             margin-top: 20px;
             transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .info-box:hover {
-            background: rgba(217, 207, 187, 0.9);
+            background: rgba(217, 207, 187, 0.22);
             transform: translateY(-3px);
+        }
+
+        .info-box h3, .info-box p {
+            color: rgba(255, 255, 255, 0.85);
         }
 
         .qq-big {
             font-size: 52px;
             font-weight: 900;
-            color: #113946;
+            color: rgba(17, 57, 70, 0.9);
             letter-spacing: 6px;
             margin: 16px 0;
             cursor: pointer;
             transition: all 0.3s;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
 
         .qq-big:hover {
-            text-shadow: 3px 3px 0 #ffd700;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
             transform: scale(1.02);
         }
 
         .tag-java {
-            background: #236653;
-            color: #fbf3e0;
+            background: rgba(35, 102, 83, 0.6);
+            color: rgba(255, 255, 255, 0.9);
             padding: 6px 20px;
             border-radius: 40px;
             font-weight: 700;
             display: inline-block;
             margin-right: 12px;
             transition: all 0.3s;
+            backdrop-filter: blur(5px);
         }
 
         .tag-java:hover {
             transform: translateY(-2px);
-            background: #1a4a3c;
+            background: rgba(35, 102, 83, 0.8);
         }
 
-        /* 音乐栏 - 动态 */
+        /* 音乐栏 - 液态毛玻璃 */
         .music-bar {
-            background: rgba(252, 247, 238, 0.92);
-            backdrop-filter: blur(16px);
+            background: rgba(252, 247, 238, 0.12);
+            backdrop-filter: blur(20px);
             border-radius: 60px;
             padding: 16px 28px;
             margin-top: 24px;
@@ -675,6 +719,7 @@
             gap: 16px;
             transition: all 0.3s;
             animation: slideUp 0.5s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         @keyframes slideUp {
@@ -689,13 +734,13 @@
         }
 
         .music-bar:hover {
-            background: rgba(252, 247, 238, 0.98);
+            background: rgba(252, 247, 238, 0.18);
             transform: translateY(-3px);
         }
 
         .music-btn {
-            background: linear-gradient(135deg, #2e5f6e, #1a3f4e);
-            border: none;
+            background: rgba(46, 95, 110, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             color: white;
             width: 44px;
             height: 44px;
@@ -703,12 +748,11 @@
             font-size: 18px;
             cursor: pointer;
             transition: all 0.3s;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         }
 
         .music-btn:hover {
             transform: scale(1.1);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            background: rgba(46, 95, 110, 0.9);
         }
 
         .music-info {
@@ -718,22 +762,23 @@
         .music-title {
             font-weight: 700;
             font-size: 16px;
+            color: rgba(255, 255, 255, 0.95);
             transition: color 0.3s;
         }
 
         .music-title:hover {
-            color: #ff8c00;
+            color: rgba(255, 200, 100, 0.9);
         }
 
         .music-artist {
             font-size: 12px;
-            color: #5a7a7e;
+            color: rgba(255, 255, 255, 0.6);
         }
 
         .progress-bar {
             flex: 1;
             height: 4px;
-            background: #c4d5d8;
+            background: rgba(196, 213, 216, 0.3);
             border-radius: 2px;
             cursor: pointer;
             transition: all 0.3s;
@@ -753,17 +798,19 @@
 
         .gallery-item {
             aspect-ratio: 1;
-            background: #1a3f4e;
+            background: rgba(26, 63, 78, 0.5);
             border-radius: 20px;
             overflow: hidden;
             cursor: pointer;
             transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
             position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.15);
         }
 
         .gallery-item:hover {
             transform: scale(1.05);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 215, 0, 0.5);
         }
 
         .gallery-item img {
@@ -777,7 +824,7 @@
             transform: scale(1.1);
         }
 
-        /* 服务器列表 - 已加长 */
+        /* 服务器列表 */
         .server-row {
             display: flex;
             flex-direction: column;
@@ -786,23 +833,26 @@
         }
 
         .server-box {
-            background: linear-gradient(135deg, #2e5f6e, #1a3f4e);
+            background: rgba(46, 95, 110, 0.5);
+            backdrop-filter: blur(10px);
             border-radius: 28px;
             padding: 20px;
-            color: white;
+            color: rgba(255, 255, 255, 0.95);
             transition: all 0.3s ease;
             cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.15);
         }
 
         .server-box:hover {
             transform: translateX(5px) translateY(-3px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-            background: linear-gradient(135deg, #1a4a5a, #0e2a38);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+            background: rgba(46, 95, 110, 0.7);
+            border-color: rgba(255, 255, 255, 0.3);
         }
 
         .copy-btn {
-            background: #5a8b9a;
-            border: none;
+            background: rgba(90, 139, 154, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             color: white;
             padding: 6px 16px;
             border-radius: 30px;
@@ -812,13 +862,14 @@
         }
 
         .copy-btn:hover {
-            background: #ff8c00;
+            background: rgba(255, 140, 0, 0.8);
             transform: scale(1.05);
         }
 
         /* 成员卡片 */
         .member-card {
-            background: rgba(245, 240, 224, 0.8);
+            background: rgba(245, 240, 224, 0.15);
+            backdrop-filter: blur(10px);
             border-radius: 28px;
             padding: 16px 20px;
             display: flex;
@@ -827,22 +878,28 @@
             margin-bottom: 12px;
             transition: all 0.3s;
             cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .member-card:hover {
-            background: rgba(245, 240, 224, 0.95);
+            background: rgba(245, 240, 224, 0.25);
             transform: translateX(5px);
-            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.1);
+            border-color: rgba(255, 255, 255, 0.25);
         }
 
         .member-card.owner {
-            background: rgba(254, 245, 214, 0.9);
-            border-left: 5px solid #ffd700;
+            background: rgba(254, 245, 214, 0.2);
+            border-left: 5px solid rgba(255, 215, 0, 0.7);
+        }
+
+        .member-card div, .member-card strong, .member-card small {
+            color: rgba(255, 255, 255, 0.9);
         }
 
         /* 模组卡片 */
         .mod-card {
-            background: rgba(245, 240, 224, 0.8);
+            background: rgba(245, 240, 224, 0.15);
+            backdrop-filter: blur(10px);
             border-radius: 24px;
             padding: 16px;
             display: flex;
@@ -850,15 +907,20 @@
             justify-content: space-between;
             margin-bottom: 12px;
             transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .mod-card:hover {
-            background: rgba(245, 240, 224, 0.95);
+            background: rgba(245, 240, 224, 0.25);
             transform: translateX(5px);
         }
 
+        .mod-card span {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
         .mod-download-btn {
-            background: #5a8b9a;
+            background: rgba(90, 139, 154, 0.7);
             color: white;
             padding: 6px 16px;
             border-radius: 30px;
@@ -868,13 +930,14 @@
         }
 
         .mod-download-btn:hover {
-            background: #ff8c00;
+            background: rgba(255, 140, 0, 0.8);
             transform: scale(1.05);
         }
 
         /* 歌曲卡片 */
         .song-card {
-            background: rgba(245, 240, 224, 0.8);
+            background: rgba(245, 240, 224, 0.15);
+            backdrop-filter: blur(10px);
             border-radius: 24px;
             padding: 14px 18px;
             display: flex;
@@ -883,21 +946,40 @@
             cursor: pointer;
             margin-bottom: 10px;
             transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .song-card:hover {
-            background: rgba(245, 240, 224, 0.95);
+            background: rgba(245, 240, 224, 0.25);
             transform: translateX(5px);
         }
 
         .song-card.playing {
-            background: #d4e8e0;
-            border-left: 5px solid #2e5f6e;
+            background: rgba(212, 232, 224, 0.3);
+            border-left: 5px solid rgba(46, 95, 110, 0.8);
+        }
+
+        .song-card div, .song-card .music-title, .song-card .music-artist {
+            color: rgba(255, 255, 255, 0.9);
         }
 
         .msg-list {
             max-height: 500px;
             overflow-y: auto;
+        }
+
+        .msg-card {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 12px 16px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            color: rgba(255, 255, 255, 0.85);
+            transition: all 0.3s;
+        }
+
+        .msg-card:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(3px);
         }
 
         /* 页脚 */
@@ -908,45 +990,51 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(168, 159, 134, 0.8);
-            backdrop-filter: blur(10px);
+            background: rgba(168, 159, 134, 0.2);
+            backdrop-filter: blur(15px);
             border-radius: 50px;
             margin-top: 20px;
             flex-wrap: wrap;
             gap: 10px;
             transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.15);
         }
 
         .foot:hover {
-            background: rgba(168, 159, 134, 0.95);
+            background: rgba(168, 159, 134, 0.3);
+        }
+
+        .foot div span {
+            color: rgba(255, 255, 255, 0.8);
         }
 
         .dynamic-msg {
-            background: #0f3543;
-            color: #deeffa;
+            background: rgba(15, 53, 67, 0.6);
+            color: rgba(222, 239, 250, 0.9);
             padding: 8px 22px;
             border-radius: 60px;
             font-size: 14px;
             font-weight: 600;
             animation: msgPulse 2s infinite;
+            backdrop-filter: blur(5px);
         }
 
         @keyframes msgPulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; text-shadow: 0 0 5px rgba(100, 200, 255, 0.5); }
         }
 
         /* 设备检测面板 */
         .device-info {
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(10px);
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(15px);
             border-radius: 20px;
             padding: 15px;
             margin-bottom: 20px;
-            color: #0f0;
+            color: rgba(0, 255, 0, 0.8);
             font-family: monospace;
             font-size: 12px;
-            border: 1px solid #0f0;
+            border: 1px solid rgba(0, 255, 0, 0.3);
         }
 
         @media (max-width: 700px) {
@@ -970,98 +1058,56 @@
 
     // 禁用F12、Ctrl+Shift+I、Ctrl+U、Ctrl+S等
     document.addEventListener('keydown', function(e) {
-        // F12
-        if (e.key === 'F12') {
-            e.preventDefault();
-            return false;
-        }
-        // Ctrl+Shift+I
-        if (e.ctrlKey && e.shiftKey && e.key === 'I') {
-            e.preventDefault();
-            return false;
-        }
-        // Ctrl+Shift+J
-        if (e.ctrlKey && e.shiftKey && e.key === 'J') {
-            e.preventDefault();
-            return false;
-        }
-        // Ctrl+U
-        if (e.ctrlKey && e.key === 'u') {
-            e.preventDefault();
-            return false;
-        }
-        // Ctrl+S
-        if (e.ctrlKey && e.key === 's') {
-            e.preventDefault();
-            return false;
-        }
-        // Ctrl+Shift+C
-        if (e.ctrlKey && e.shiftKey && e.key === 'C') {
-            e.preventDefault();
-            return false;
-        }
-        // Ctrl+Shift+K
-        if (e.ctrlKey && e.shiftKey && e.key === 'K') {
-            e.preventDefault();
-            return false;
-        }
+        if (e.key === 'F12') { e.preventDefault(); return false; }
+        if (e.ctrlKey && e.shiftKey && e.key === 'I') { e.preventDefault(); return false; }
+        if (e.ctrlKey && e.shiftKey && e.key === 'J') { e.preventDefault(); return false; }
+        if (e.ctrlKey && e.key === 'u') { e.preventDefault(); return false; }
+        if (e.ctrlKey && e.key === 's') { e.preventDefault(); return false; }
+        if (e.ctrlKey && e.shiftKey && e.key === 'C') { e.preventDefault(); return false; }
+        if (e.ctrlKey && e.shiftKey && e.key === 'K') { e.preventDefault(); return false; }
     });
 
-    // 检测开发者工具是否打开
-    let devtoolsOpen = false;
-    const element = new Image();
-    Object.defineProperty(element, 'id', {
-        get: function() {
-            devtoolsOpen = true;
-            document.body.innerHTML = '<div style="text-align:center;padding:100px;color:red;font-size:24px;">🛡️ 开发者工具已检测到，页面已保护</div>';
-            alert('检测到开发者工具，请关闭后刷新页面');
+    // 雪花粒子效果
+    function createSnow() {
+        for (let i = 0; i < 50; i++) {
+            const snow = document.createElement('div');
+            snow.className = 'snow-particle';
+            snow.style.width = Math.random() * 4 + 2 + 'px';
+            snow.style.height = snow.style.width;
+            snow.style.left = Math.random() * 100 + '%';
+            snow.style.top = Math.random() * 100 + '%';
+            snow.style.animation = 'snowFall ' + (Math.random() * 5 + 5) + 's linear infinite';
+            snow.style.opacity = Math.random() * 0.5 + 0.2;
+            document.body.appendChild(snow);
         }
-    });
-    setInterval(function() {
-        devtoolsOpen = false;
-        console.log(element);
-        console.clear();
-    }, 1000);
+    }
+    
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes snowFall {
+            from { transform: translateY(-10vh) rotate(0deg); }
+            to { transform: translateY(110vh) rotate(360deg); }
+        }
+    `;
+    document.head.appendChild(style);
+    createSnow();
 
     // 设备检测
     function detectDevice() {
         const ua = navigator.userAgent;
-        let device = {
-            browser: '',
-            os: '',
-            isMobile: false,
-            screenSize: screen.width + 'x' + screen.height
-        };
-
-        if (/iPhone|iPad|iPod/i.test(ua)) {
-            device.os = 'iOS';
-            device.isMobile = true;
-        } else if (/Android/i.test(ua)) {
-            device.os = 'Android';
-            device.isMobile = true;
-        } else if (/Windows/i.test(ua)) {
-            device.os = 'Windows';
-        } else if (/Mac/i.test(ua)) {
-            device.os = 'macOS';
-        } else {
-            device.os = 'Unknown';
-        }
-
-        if (/Chrome/i.test(ua) && !/Edg/i.test(ua)) {
-            device.browser = 'Chrome';
-        } else if (/Firefox/i.test(ua)) {
-            device.browser = 'Firefox';
-        } else if (/Safari/i.test(ua) && !/Chrome/i.test(ua)) {
-            device.browser = 'Safari';
-        } else if (/Edg/i.test(ua)) {
-            device.browser = 'Edge';
-        } else {
-            device.browser = 'Unknown';
-        }
-
+        let device = { browser: '', os: '', isMobile: false, screenSize: screen.width + 'x' + screen.height };
+        if (/iPhone|iPad|iPod/i.test(ua)) { device.os = 'iOS'; device.isMobile = true; }
+        else if (/Android/i.test(ua)) { device.os = 'Android'; device.isMobile = true; }
+        else if (/Windows/i.test(ua)) device.os = 'Windows';
+        else if (/Mac/i.test(ua)) device.os = 'macOS';
+        else device.os = 'Unknown';
+        if (/Chrome/i.test(ua) && !/Edg/i.test(ua)) device.browser = 'Chrome';
+        else if (/Firefox/i.test(ua)) device.browser = 'Firefox';
+        else if (/Safari/i.test(ua) && !/Chrome/i.test(ua)) device.browser = 'Safari';
+        else if (/Edg/i.test(ua)) device.browser = 'Edge';
+        else device.browser = 'Unknown';
         return device;
     }
-
     const device = detectDevice();
     console.log('设备信息:', device);
 </script>
@@ -1070,7 +1116,7 @@
     <div class="auth-container">
         <div class="auth-title">
             🏔️ Java庄园农家乐<br>
-            <small>极寒之地玩家 · v1.26.29.8</small>
+            <small>极寒之地玩家 · v1.26.29.9</small>
         </div>
 
         <div id="loginForm">
@@ -1121,11 +1167,6 @@
 </div>
 
 <div class="main-content" id="mainContent">
-    <!-- 设备检测面板 -->
-    <div class="device-info" id="deviceInfo" style="display:none;">
-        🖥️ 设备信息 | 系统: <span id="deviceOs"></span> | 浏览器: <span id="deviceBrowser"></span> | 屏幕: <span id="screenSize"></span>
-    </div>
-    
     <nav class="navbar">
         <button class="nav-btn active" onclick="showPage('home')">🏡 庄园首页</button>
         <button class="nav-btn" onclick="showPage('members')">👥 群成员</button>
@@ -1156,20 +1197,20 @@
                     <p>❄️ 冰钓大赛周六开启 · 温泉夜话每晚九点</p>
                     <p>🐟 首次签到赠送10资源币，连续签到奖励递增</p>
                     <p>🏆 资源币跨设备同步，登录账号即可存取</p>
-                    <p>📌 当前版本：v1.26.29.8 · 极寒豪华版 · 动态极光主题</p>
+                    <p>📌 当前版本：v1.26.29.9 · 液态玻璃主题 · 半透明毛玻璃效果</p>
                     <div style="margin-top: 20px;">
                         <span class="tag-java">☕ Java版原汁原味</span>
-                        <span class="tag-java" style="background:#1c4b62;">❄️ 极寒生存挑战</span>
-                        <span class="tag-java" style="background:#4a6e5e;">🔥 温泉已开放</span>
-                        <span class="tag-java" style="background:#8b6b4a;">🎣 冰钓大赛报名中</span>
+                        <span class="tag-java" style="background:rgba(28, 75, 98, 0.6);">❄️ 极寒生存挑战</span>
+                        <span class="tag-java" style="background:rgba(74, 110, 94, 0.6);">🔥 温泉已开放</span>
+                        <span class="tag-java" style="background:rgba(139, 107, 74, 0.6);">🎣 冰钓大赛报名中</span>
                     </div>
                     <div class="qq-big" onclick="copyToClipboard('1091304030')">1091304030</div>
-                    <p style="margin-top: 16px; font-size: 14px; color: #5a6e5e;">📢 官方一群：1090578436 &nbsp;|&nbsp; 二群：1091304030</p>
+                    <p style="margin-top: 16px; font-size: 14px; color: rgba(255, 255, 255, 0.7);">📢 官方一群：1090578436 &nbsp;|&nbsp; 二群：1091304030</p>
                 </div>
             </div>
         </div>
     </div>
-
+    
     <div id="pageMembers" class="page">
         <div class="master-card">
             <div class="card-inner">
@@ -1195,7 +1236,7 @@
                     <div class="msg-card">🔥 冰下钓鱼大赛周六开启，前三名奖励稀有资源币！</div>
                     <div class="msg-card">⛷️ 雪山探险队招募，探索冰霜骷髅要塞，组队私聊群主。</div>
                     <div class="msg-card">🎣 温泉夜话每晚九点，篝火故事会等你来分享。</div>
-                    <div class="msg-card">❄️ 新版本1.26.29.8已更新，动态极光背景，修复若干问题，请及时同步。</div>
+                    <div class="msg-card">❄️ 新版本1.26.29.9已更新，液态玻璃主题，修复注册问题，请及时同步。</div>
                     <div class="msg-card">🏔️ 极寒之地新增雪狐驯养系统，可在雪山捕捉。</div>
                     <div class="msg-card">📦 模组包已更新至26个，新增暮色森林和投影模组。</div>
                     <div class="msg-card">🚂 东线铁路已通车，总长3200米，途径3个停靠站。</div>
@@ -1206,6 +1247,7 @@
                     <div class="msg-card">🎵 新增10首精选歌曲，包含APT、Higher等热门单曲。</div>
                     <div class="msg-card">🛡️ 新增设备检测功能，可查看浏览器、系统等信息。</div>
                     <div class="msg-card">🔒 增强安全防护，禁用开发者工具查看源码。</div>
+                    <div class="msg-card">✨ 液态玻璃半透明毛玻璃效果，视觉体验全面升级。</div>
                 </div>
             </div>
         </div>
@@ -1228,8 +1270,8 @@
             </div>
         </div>
     </div>
-    
-    <!-- ========== 其他服务器页面（已加长） ========== -->
+
+    <!-- ========== 其他服务器页面（保持原样，不增加） ========== -->
     <div id="pageOther" class="page">
         <div class="master-card">
             <div class="card-inner">
@@ -1239,115 +1281,42 @@
                         <strong>🏡 村庄农家乐（Java/基岩版）</strong><br>
                         地址：QM202604042011.aternos.me<br>
                         端口：12437<br>
-                        版本：1.20.1<br>
-                        状态：🟢 在线<br>
-                        特色：生存/建筑/红石<br>
                         <button class="copy-btn" onclick="copyToClipboard('QM202604042011.aternos.me:12437')">📋 复制地址</button>
                     </div>
                     <div class="server-box">
                         <strong>✨ 空岛生存（Java版）</strong><br>
                         地址：fm.rainplay.cn<br>
                         端口：17901<br>
-                        版本：1.20.1<br>
-                        状态：🟢 在线<br>
-                        特色：空岛/经济/商店<br>
                         <button class="copy-btn" onclick="copyToClipboard('fm.rainplay.cn:17901')">📋 复制地址</button>
                     </div>
                     <div class="server-box">
                         <strong>⚔️ 2b2t.org（Java版）</strong><br>
                         地址：2b2t.org<br>
                         端口：25565<br>
-                        版本：1.19-1.20<br>
-                        状态：🟢 在线<br>
-                        特色：无规则/无政府/历史悠久<br>
                         <button class="copy-btn" onclick="copyToClipboard('2b2t.org:25565')">📋 复制地址</button>
                     </div>
                     <div class="server-box">
                         <strong>🏴 3c3u.org（Java版）</strong><br>
                         地址：3c3u.org<br>
                         端口：25565<br>
-                        版本：1.19-1.20<br>
-                        状态：🟢 在线<br>
-                        特色：无规则/无政府/中文社区<br>
                         <button class="copy-btn" onclick="copyToClipboard('3c3u.org:25565')">📋 复制地址</button>
                     </div>
                     <div class="server-box">
                         <strong>⚔️ 5C5U·无规则无政府（Java/基岩版）</strong><br>
                         地址：5C5U.aternos.me<br>
                         端口：26591<br>
-                        版本：1.20.1<br>
-                        状态：🟢 在线<br>
-                        特色：无规则/互通/自由PVP<br>
                         <button class="copy-btn" onclick="copyToClipboard('5C5U.aternos.me:26591')">📋 复制地址</button>
                     </div>
                     <div class="server-box">
                         <strong>☁️ 雨云·互通服务器（Java/基岩版）</strong><br>
                         地址：udpsq.rainplay.cn<br>
                         端口：46271<br>
-                        版本：1.20.1<br>
-                        状态：🟢 在线<br>
-                        特色：互通/养老/建筑<br>
                         <button class="copy-btn" onclick="copyToClipboard('udpsq.rainplay.cn:46271')">📋 复制地址</button>
                     </div>
-                    <div class="server-box">
-                        <strong>🏔️ 极寒之地·官方服务器（Java版）</strong><br>
-                        地址：jzly.aternos.me<br>
-                        端口：12438<br>
-                        版本：1.20.1<br>
-                        状态：🟢 在线<br>
-                        特色：原版生存/冰钓/温泉<br>
-                        <button class="copy-btn" onclick="copyToClipboard('jzly.aternos.me:12438')">📋 复制地址</button>
-                    </div>
-                    <div class="server-box">
-                        <strong>🔥 烈焰生存（Java/基岩版）</strong><br>
-                        地址：lysc.aternos.me<br>
-                        端口：12439<br>
-                        版本：1.20.1<br>
-                        状态：🟡 维护中<br>
-                        特色：RPG/副本/宠物<br>
-                        <button class="copy-btn" onclick="copyToClipboard('lysc.aternos.me:12439')">📋 复制地址</button>
-                    </div>
-                    <div class="server-box">
-                        <strong>🌊 海洋世界（Java版）</strong><br>
-                        地址：hysj.aternos.me<br>
-                        端口：12440<br>
-                        版本：1.20.1<br>
-                        状态：🟢 在线<br>
-                        特色：海洋生存/船战/水下遗迹<br>
-                        <button class="copy-btn" onclick="copyToClipboard('hysj.aternos.me:12440')">📋 复制地址</button>
-                    </div>
-                    <div class="server-box">
-                        <strong>🧙 魔法世界·巫师服（Java版）</strong><br>
-                        地址：mfsj.aternos.me<br>
-                        端口：12441<br>
-                        版本：1.20.1<br>
-                        状态：🟢 在线<br>
-                        特色：魔法/神秘/炼金<br>
-                        <button class="copy-btn" onclick="copyToClipboard('mfsj.aternos.me:12441')">📋 复制地址</button>
-                    </div>
-                    <div class="server-box">
-                        <strong>🤖 科技时代·机械服（Java版）</strong><br>
-                        地址：kjsd.aternos.me<br>
-                        端口：12442<br>
-                        版本：1.20.1<br>
-                        状态：🟡 维护中<br>
-                        特色：工业/机械/自动化<br>
-                        <button class="copy-btn" onclick="copyToClipboard('kjsd.aternos.me:12442')">📋 复制地址</button>
-                    </div>
-                    <div class="server-box">
-                        <strong>🎮 小游戏大厅（Java版）</strong><br>
-                        地址：game.rainplay.cn<br>
-                        端口：25566<br>
-                        版本：1.20.1<br>
-                        状态：🟢 在线<br>
-                        特色：起床战争/空岛战争/饥饿游戏<br>
-                        <button class="copy-btn" onclick="copyToClipboard('game.rainplay.cn:25566')">📋 复制地址</button>
-                    </div>
                 </div>
-                <p style="margin-top: 24px; padding: 16px; background: rgba(230, 221, 206, 0.8); border-radius: 28px;">
+                <p style="margin-top: 24px; padding: 16px; background: rgba(230, 221, 206, 0.2); border-radius: 28px;">
                     📢 官方一群：1090578436 &nbsp;|&nbsp; 非官方二群：1091304030<br>
-                    💡 加群请备注“极寒玩家”，欢迎加入庄园大家庭！<br>
-                    🌟 服务器状态每5分钟自动更新一次，遇到无法连接请稍后再试。
+                    💡 加群请备注“极寒玩家”，欢迎加入庄园大家庭！
                 </p>
             </div>
         </div>
@@ -1383,17 +1352,17 @@
         <div class="master-card">
             <div class="card-inner">
                 <h2 style="font-size: 28px; margin-bottom: 20px;">⚙️ 庄园设置</h2>
-                <div style="display: flex; justify-content: space-between; padding: 16px 0; border-bottom: 1px dashed #9ab0b0;"><span style="font-weight: 700; color: #23555e;">📌 当前版本</span><span style="color: #0e363e;">1.26.29.8</span></div>
-                <div style="display: flex; justify-content: space-between; padding: 16px 0; border-bottom: 1px dashed #9ab0b0;"><span style="font-weight: 700; color: #23555e;">🏆 资源币系统</span><span style="color: #0e363e;">JSONBin.io 云端同步</span></div>
-                <div style="display: flex; justify-content: space-between; padding: 16px 0; border-bottom: 1px dashed #9ab0b0;"><span style="font-weight: 700; color: #23555e;">🎵 音乐数量</span><span style="color: #0e363e;">22首精选</span></div>
-                <div style="display: flex; justify-content: space-between; padding: 16px 0; border-bottom: 1px dashed #9ab0b0;"><span style="font-weight: 700; color: #23555e;">📦 模组数量</span><span style="color: #0e363e;">26个</span></div>
-                <div style="display: flex; justify-content: space-between; padding: 16px 0; border-bottom: 1px dashed #9ab0b0;"><span style="font-weight: 700; color: #23555e;">📸 画廊截图</span><span style="color: #0e363e;">37张</span></div>
-                <div style="display: flex; justify-content: space-between; padding: 16px 0; border-bottom: 1px dashed #9ab0b0;"><span style="font-weight: 700; color: #23555e;">🌐 友情服务器</span><span style="color: #0e363e;">12个</span></div>
-                <div style="display: flex; justify-content: space-between; padding: 16px 0; border-bottom: 1px dashed #9ab0b0;"><span style="font-weight: 700; color: #23555e;">🛡️ 安全防护</span><span style="color: #0e363e;">已启用（防F12/防查看源码）</span></div>
-                <div style="display: flex; justify-content: space-between; padding: 16px 0;"><span style="font-weight: 700; color: #23555e;">📱 设备检测</span><span style="color: #0e363e;">已集成</span></div>
-                <div style="margin-top: 24px; padding: 16px; background: rgba(230, 221, 206, 0.8); border-radius: 28px; font-size: 13px; color: #5a6e5e;">
+                <div style="display: flex; justify-content: space-between; padding: 16px 0; border-bottom: 1px dashed rgba(155, 176, 176, 0.5);"><span style="font-weight: 700; color: rgba(255, 255, 255, 0.85);">📌 当前版本</span><span style="color: rgba(255, 255, 255, 0.7);">1.26.29.9</span></div>
+                <div style="display: flex; justify-content: space-between; padding: 16px 0; border-bottom: 1px dashed rgba(155, 176, 176, 0.5);"><span style="font-weight: 700; color: rgba(255, 255, 255, 0.85);">🏆 资源币系统</span><span style="color: rgba(255, 255, 255, 0.7);">JSONBin.io 云端同步</span></div>
+                <div style="display: flex; justify-content: space-between; padding: 16px 0; border-bottom: 1px dashed rgba(155, 176, 176, 0.5);"><span style="font-weight: 700; color: rgba(255, 255, 255, 0.85);">🎵 音乐数量</span><span style="color: rgba(255, 255, 255, 0.7);">22首精选</span></div>
+                <div style="display: flex; justify-content: space-between; padding: 16px 0; border-bottom: 1px dashed rgba(155, 176, 176, 0.5);"><span style="font-weight: 700; color: rgba(255, 255, 255, 0.85);">📦 模组数量</span><span style="color: rgba(255, 255, 255, 0.7);">26个</span></div>
+                <div style="display: flex; justify-content: space-between; padding: 16px 0; border-bottom: 1px dashed rgba(155, 176, 176, 0.5);"><span style="font-weight: 700; color: rgba(255, 255, 255, 0.85);">📸 画廊截图</span><span style="color: rgba(255, 255, 255, 0.7);">37张</span></div>
+                <div style="display: flex; justify-content: space-between; padding: 16px 0; border-bottom: 1px dashed rgba(155, 176, 176, 0.5);"><span style="font-weight: 700; color: rgba(255, 255, 255, 0.85);">🌐 友情服务器</span><span style="color: rgba(255, 255, 255, 0.7);">6个</span></div>
+                <div style="display: flex; justify-content: space-between; padding: 16px 0; border-bottom: 1px dashed rgba(155, 176, 176, 0.5);"><span style="font-weight: 700; color: rgba(255, 255, 255, 0.85);">🛡️ 安全防护</span><span style="color: rgba(255, 255, 255, 0.7);">已启用（防F12/防查看源码）</span></div>
+                <div style="display: flex; justify-content: space-between; padding: 16px 0;"><span style="font-weight: 700; color: rgba(255, 255, 255, 0.85);">📱 设备检测</span><span style="color: rgba(255, 255, 255, 0.7);">已集成</span></div>
+                <div style="margin-top: 24px; padding: 16px; background: rgba(230, 221, 206, 0.2); border-radius: 28px; font-size: 13px; color: rgba(255, 255, 255, 0.7);">
                     💡 提示：资源币数据存储在JSONBin.io云端，换设备后登录同一账号即可同步。<br>
-                    🎨 动态极光背景由CSS动画生成，性能优化良好。<br>
+                    🎨 液态玻璃半透明毛玻璃效果，视觉体验全面升级。<br>
                     🔒 本页面已禁用F12、右键菜单、Ctrl+U等查看源码方式。
                 </div>
             </div>
@@ -1405,19 +1374,19 @@
         <div class="master-card">
             <div class="card-inner">
                 <h2 style="font-size: 28px; margin-bottom: 20px;">📱 设备检测</h2>
-                <div style="padding: 20px; background: rgba(0, 0, 0, 0.05); border-radius: 28px; margin-bottom: 20px;">
-                    <h3>🖥️ 系统信息</h3>
-                    <p id="detectOs" style="margin: 10px 0;">检测中...</p>
-                    <h3>🌐 浏览器信息</h3>
-                    <p id="detectBrowser" style="margin: 10px 0;">检测中...</p>
-                    <h3>📐 屏幕信息</h3>
-                    <p id="detectScreen" style="margin: 10px 0;">检测中...</p>
-                    <h3>🔋 电池信息</h3>
-                    <p id="detectBattery" style="margin: 10px 0;">检测中...</p>
-                    <h3>🌍 网络信息</h3>
-                    <p id="detectNetwork" style="margin: 10px 0;">检测中...</p>
-                    <h3>📍 语言/时区</h3>
-                    <p id="detectLang" style="margin: 10px 0;">检测中...</p>
+                <div style="padding: 20px; background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(10px); border-radius: 28px; margin-bottom: 20px;">
+                    <h3 style="color: rgba(255, 255, 255, 0.9);">🖥️ 系统信息</h3>
+                    <p id="detectOs" style="margin: 10px 0; color: rgba(255, 255, 255, 0.7);">检测中...</p>
+                    <h3 style="color: rgba(255, 255, 255, 0.9);">🌐 浏览器信息</h3>
+                    <p id="detectBrowser" style="margin: 10px 0; color: rgba(255, 255, 255, 0.7);">检测中...</p>
+                    <h3 style="color: rgba(255, 255, 255, 0.9);">📐 屏幕信息</h3>
+                    <p id="detectScreen" style="margin: 10px 0; color: rgba(255, 255, 255, 0.7);">检测中...</p>
+                    <h3 style="color: rgba(255, 255, 255, 0.9);">🔋 电池信息</h3>
+                    <p id="detectBattery" style="margin: 10px 0; color: rgba(255, 255, 255, 0.7);">检测中...</p>
+                    <h3 style="color: rgba(255, 255, 255, 0.9);">🌍 网络信息</h3>
+                    <p id="detectNetwork" style="margin: 10px 0; color: rgba(255, 255, 255, 0.7);">检测中...</p>
+                    <h3 style="color: rgba(255, 255, 255, 0.9);">📍 语言/时区</h3>
+                    <p id="detectLang" style="margin: 10px 0; color: rgba(255, 255, 255, 0.7);">检测中...</p>
                 </div>
             </div>
         </div>
@@ -1428,25 +1397,30 @@
         <button class="music-btn" id="playBtn">▶️</button>
         <div class="music-info"><div class="music-title" id="currentTitle">Lovely</div><div class="music-artist" id="currentArtist">Billie Eilish & Khalid</div></div>
         <input type="range" class="progress-bar" id="progressBar" min="0" max="100" value="0">
-        <span id="currentTime" style="font-size: 11px;">0:00</span>
-        <span id="totalTime" style="font-size: 11px;">0:00</span>
+        <span id="currentTime" style="font-size: 11px; color: rgba(255,255,255,0.7);">0:00</span>
+        <span id="totalTime" style="font-size: 11px; color: rgba(255,255,255,0.7);">0:00</span>
         <input type="range" id="volSlider" min="0" max="100" value="30" style="width: 80px;">
     </div>
     <audio id="bgMusic" loop></audio>
 </div>
 
 <div class="foot">
-    <div><span>版本 1.26.29.8</span><span class="dynamic-msg" id="dynText">❄️ 极寒之地</span></div>
+    <div><span>版本 1.26.29.9</span><span class="dynamic-msg" id="dynText">❄️ 极寒之地</span></div>
     <div><span>🏔️❄️</span><span>🔥 温泉已备好</span></div>
 </div>
 
 <script>
 // ============================================
-// JSONBin.io 配置 - 最终正确版本 v1.26.29.8
+// JSONBin.io 配置 - 使用 Master Key（修复注册失败问题）
+// 版本：v1.26.29.9
 // ============================================
-const ACCESS_KEY = "$2a$10$SBoNNSwHe1LQyzavrPY0NesJwiVyTr/XKPwogj0XeM1gTS6Q2ZYtC";
+const MASTER_KEY = "$2a$10$Xx9jXkA37xtQiR2gmbOkCuC1x9CFgtKBpDt7ljIFAjXhtDw7/JJVm";
 const BIN_ID = "6A23D95DDA38895DFE9023E4";
 const API_BASE = "https://api.jsonbin.io/v3/b";
+
+// 使用 Master Key 作为主要认证方式
+const API_KEY = MASTER_KEY;
+const AUTH_HEADER = "X-Master-Key";
 
 let currentUser = null;
 let currentBalance = 0;
@@ -1535,7 +1509,7 @@ async function loadAllUsers() {
     try {
         const url = API_BASE + "/" + BIN_ID + "/latest";
         const resp = await fetch(url, {
-            headers: { "X-Access-Key": ACCESS_KEY }
+            headers: { "X-Master-Key": API_KEY }
         });
         if (resp.status === 404) return { users: [], nextId: 1 };
         if (!resp.ok) throw new Error("HTTP " + resp.status);
@@ -1551,7 +1525,7 @@ async function saveAllUsers(data) {
     const url = API_BASE + "/" + BIN_ID;
     const resp = await fetch(url, {
         method: "PUT",
-        headers: { "Content-Type": "application/json", "X-Access-Key": ACCESS_KEY },
+        headers: { "Content-Type": "application/json", "X-Master-Key": API_KEY },
         body: JSON.stringify(data)
     });
     if (!resp.ok) throw new Error("保存失败");
@@ -1562,7 +1536,7 @@ async function loadUserPersonalData(userBinId) {
     try {
         const url = API_BASE + "/" + userBinId + "/latest";
         const resp = await fetch(url, {
-            headers: { "X-Access-Key": ACCESS_KEY }
+            headers: { "X-Master-Key": API_KEY }
         });
         if (resp.status === 404) return null;
         if (!resp.ok) throw new Error("加载失败");
@@ -1577,7 +1551,7 @@ async function saveUserPersonalData(userBinId, userData) {
     const url = API_BASE + "/" + userBinId;
     const resp = await fetch(url, {
         method: "PUT",
-        headers: { "Content-Type": "application/json", "X-Access-Key": ACCESS_KEY },
+        headers: { "Content-Type": "application/json", "X-Master-Key": API_KEY },
         body: JSON.stringify(userData)
     });
     if (!resp.ok) throw new Error("保存个人数据失败");
@@ -1639,7 +1613,7 @@ async function register() {
         balance: 0,
         lastSign: "",
         lastShare: "",
-        version: "1.26.29.8"
+        version: "1.26.29.9"
     };
 
     try {
@@ -1796,7 +1770,7 @@ async function exchangeItem(item) {
 
     const receiptHTML = '<div class="receipt-paper" id="receiptForShare">' +
         '<div style="text-align:center; font-size:22px; font-weight:800;">🧾 庄园兑换凭证</div>' +
-        '<div style="border-top:1px dashed #baa875; margin:16px 0;"></div>' +
+        '<div style="border-top:1px dashed rgba(186, 168, 117, 0.5); margin:16px 0;"></div>' +
         '<div><strong>📌 单号：</strong>' + billNo + '</div>' +
         '<div><strong>🏪 商店：</strong>' + (currentShop === "village" ? "村庄农家乐商店" : "5C5U 无政府商店") + '</div>' +
         '<div><strong>🎁 商品：</strong>' + item.icon + " " + item.name + " × " + item.amount + '</div>' +
@@ -1805,11 +1779,11 @@ async function exchangeItem(item) {
         '<div><strong>📉 兑换前：</strong>' + beforeBalance + ' 资源币</div>' +
         '<div><strong>📈 兑换后：</strong>' + afterBalance + ' 资源币</div>' +
         '<div><strong>⏱️ 时间：</strong>' + timeStr + '</div>' +
-        '<div style="border-top:1px dashed #baa875; margin:16px 0;"></div>' +
-        '<div style="text-align:center;">❄️ Java庄园农家乐 · 极寒之地玩家 · v1.26.29.8<br>QQ群：1091304030</div>' +
+        '<div style="border-top:1px dashed rgba(186, 168, 117, 0.5); margin:16px 0;"></div>' +
+        '<div style="text-align:center;">❄️ Java庄园农家乐 · 极寒之地玩家 · v1.26.29.9<br>QQ群：1091304030</div>' +
         '</div>' +
         '<div style="margin-top:16px; text-align:center;">' +
-        '<button class="action-btn" id="shareReceiptBtn" style="background:#2e5f6e;">📸 生成截图分享到QQ群</button>' +
+        '<button class="action-btn" id="shareReceiptBtn" style="background:rgba(46, 95, 110, 0.8);">📸 生成截图分享到QQ群</button>' +
         '</div>';
 
     document.getElementById("receiptContent").innerHTML = receiptHTML;
@@ -1925,11 +1899,11 @@ function playSong(index) {
     const cards = document.querySelectorAll(".song-card");
     for (let i = 0; i < cards.length; i++) {
         if (i === index) {
-            cards[i].style.background = "#d4e8e0";
-            cards[i].style.border = "1px solid #8abfaa";
+            cards[i].style.background = "rgba(212, 232, 224, 0.3)";
+            cards[i].style.border = "1px solid rgba(138, 191, 170, 0.5)";
         } else {
-            cards[i].style.background = "#f5f0e0";
-            cards[i].style.border = "1px solid #d9cfb8";
+            cards[i].style.background = "rgba(245, 240, 224, 0.15)";
+            cards[i].style.border = "1px solid rgba(217, 207, 184, 0.2)";
         }
     }
 }
@@ -1997,12 +1971,11 @@ function updateDeviceInfo() {
     else if (/Edg/i.test(ua)) browser = "Edge";
     else if (/OPR/i.test(ua)) browser = "Opera";
     
-    document.getElementById("detectOs").innerHTML = os + " (" + ua.match(/\(([^)]+)\)/)?.[1] || "Unknown" + ")";
+    document.getElementById("detectOs").innerHTML = os + " (" + (ua.match(/\(([^)]+)\)/)?.[1] || "Unknown") + ")";
     document.getElementById("detectBrowser").innerHTML = browser + " " + (ua.match(/(Chrome|Firefox|Safari|Edg|OPR)\/(\d+\.\d+)/)?.[2] || "Unknown");
     document.getElementById("detectScreen").innerHTML = screen.width + " x " + screen.height + "，像素比: " + (window.devicePixelRatio || 1);
     document.getElementById("detectLang").innerHTML = navigator.language + "，时区: " + Intl.DateTimeFormat().resolvedOptions().timeZone;
     
-    // 网络信息
     if (navigator.connection) {
         const conn = navigator.connection;
         document.getElementById("detectNetwork").innerHTML = "类型: " + (conn.effectiveType || "Unknown") + "，下行: " + (conn.downlink || "?") + " Mbps";
@@ -2010,7 +1983,6 @@ function updateDeviceInfo() {
         document.getElementById("detectNetwork").innerHTML = "无法获取详细网络信息";
     }
     
-    // 电池信息
     if (navigator.getBattery) {
         navigator.getBattery().then(function(battery) {
             document.getElementById("detectBattery").innerHTML = "电量: " + Math.floor(battery.level * 100) + "%，" + (battery.charging ? "充电中" : "未充电");
@@ -2090,7 +2062,7 @@ window.copyToClipboard = copyToClipboard;
 function init() {
     autoFillLastUser();
     renderShop();
-    console.log("%c Java庄园农家乐 · 极寒之地玩家 v1.26.29.8 ", "color: #fff; background: #2e5f6e; font-size: 16px; padding: 8px 16px; border-radius: 8px;");
+    console.log("%c Java庄园农家乐 · 极寒之地玩家 v1.26.29.9 ", "color: #fff; background: rgba(46, 95, 110, 0.8); font-size: 16px; padding: 8px 16px; border-radius: 8px;");
 }
 
 if (document.readyState === "loading") {
